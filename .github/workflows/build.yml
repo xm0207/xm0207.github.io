@@ -5,11 +5,17 @@ on:
     branches: [main]
 
 permissions:
-  contents: write  # 允许 Actions 推送代码到仓库
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   build:
-    name: Build and Deploy
+    name: Build
     runs-on: ubuntu-latest
 
     steps:
@@ -44,24 +50,20 @@ jobs:
       - name: Fix paths for GitHub Pages (Jekyll skips _/ and ./ dirs)
         run: node patches/fix-paths.mjs dist
 
-      - name: Deploy dist to branch
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
 
-          mkdir /tmp/dist
-          cp -r dist/. /tmp/dist/
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
-          git fetch origin
-          git checkout --orphan gh-pages
-          git reset --hard
-          rm -rf *
-
-          cp -r /tmp/dist/. .
-          touch .nojekyll
-
-          git add .
-          git commit -m "Deploy dist from $GITHUB_SHA"
-          git push -f origin gh-pages
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
