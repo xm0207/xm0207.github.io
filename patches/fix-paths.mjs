@@ -1,12 +1,10 @@
 #!/usr/bin/env node
-/**
- * fix-paths.mjs — GitHub Pages 路径修复脚本
- *
- * Jekyll 会跳过以 _ 或 . 开头的文件/目录。本脚本在构建后执行：
- * 1. _virtual/ -> virtual/，内部 _* 文件重命名
- * 2. node_modules/.pnpm/*/node_modules/PKG -> deps/PKG
- * 3. 全量替换所有 JS/HTML 文件中的路径引用
- */
+// fix-paths.mjs — GitHub Pages 路径修复脚本
+//
+// Jekyll 会跳过以 _ 或 . 开头的文件/目录。本脚本在构建后执行：
+// 1. _virtual/ -> virtual/，内部 _* 文件重命名
+// 2. node_modules/.pnpm/.../node_modules/PKG -> deps/PKG
+// 3. 全量替换所有 JS/HTML 文件中的路径引用
 import fs from "fs";
 import path from "path";
 
