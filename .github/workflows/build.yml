@@ -60,6 +60,7 @@ jobs:
           rm -rf *
 
           cp -r /tmp/dist/. .
+          touch .nojekyll
 
           git add .
           git commit -m "Deploy dist from $GITHUB_SHA"
