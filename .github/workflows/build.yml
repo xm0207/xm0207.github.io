@@ -36,6 +36,7 @@ jobs:
 
       - name: Inject OPFS filesystem
         run: |
+          touch dist/.nojekyll
           mv dist/service-worker.js dist/sw-jit.js
           cp patches/sw-fs.js dist/sw-fs.js
           cp patches/service-worker.js dist/service-worker.js
@@ -49,14 +50,14 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
           mkdir /tmp/dist
-          cp -r dist/* /tmp/dist/
+          cp -r dist/. /tmp/dist/
 
           git fetch origin
           git checkout --orphan gh-pages
           git reset --hard
           rm -rf *
 
-          cp -r /tmp/dist/* .
+          cp -r /tmp/dist/. .
 
           git add .
           git commit -m "Deploy dist from $GITHUB_SHA"
