@@ -42,42 +42,7 @@ jobs:
           cp patches/preload.js dist/preload.js
 
       - name: Fix paths for GitHub Pages (Jekyll skips _/ and ./ dirs)
-        run: |
-          cd dist
-          # Rename _virtual/ → virtual/ so Jekyll doesn't skip it
-          if [ -d _virtual ]; then
-            mv _virtual virtual
-            find . -type f \( -name '*.js' -o -name '*.html' \) | xargs sed -i 's|_virtual/|virtual/|g; s|"_virtual"|"virtual"|g'
-          fi
-          # Rename files starting with _ inside virtual/ (Jekyll skips _* files at any depth)
-          if [ -d virtual ]; then
-            for f in virtual/_*.js; do
-              [ -f "$f" ] || continue
-              newname="virtual/$(basename "$f" | sed 's/^_*/vt-/')"
-              mv "$f" "$newname"
-            done
-            # Update references: virtual/_foo.js → virtual/vt-foo.js
-            find . -type f \( -name '*.js' -o -name '*.html' \) | xargs sed -i -E 's|virtual/_+|virtual/vt-|g'
-          fi
-          # Flatten node_modules/.pnpm/*/node_modules/PKG/... → deps/PKG/...
-          if [ -d node_modules ]; then
-            mkdir -p deps
-            # Each package lives at node_modules/.pnpm/<name>@<ver>/node_modules/<pkg>/
-            for pkg_dir in node_modules/.pnpm/*/node_modules/*; do
-              pkg_name=$(basename "$pkg_dir")
-              if [ -d "$pkg_dir" ] && [ ! -d "deps/$pkg_name" ]; then
-                cp -r "$pkg_dir" "deps/$pkg_name"
-              fi
-            done
-            # Rewrite references: node_modules/.pnpm/<anything>/node_modules/<pkg>/ → deps/<pkg>/
-            find . -maxdepth 1 -type f \( -name '*.js' -o -name '*.html' \) -exec \
-              sed -i -E 's|node_modules/\.pnpm/[^/]+/node_modules/|deps/|g' {} +
-            find virtual -type f -name '*.js' -exec \
-              sed -i -E 's|\.\./node_modules/\.pnpm/[^/]+/node_modules/|../deps/|g' {} + 2>/dev/null || true
-            find deps -type f -name '*.js' -exec \
-              sed -i -E 's|\.\./\.pnpm/[^/]+/node_modules/||g' {} + 2>/dev/null || true
-            rm -rf node_modules
-          fi
+        run: node patches/fix-paths.mjs dist
 
       - name: Deploy dist to branch
         env:
