@@ -47,7 +47,7 @@ jobs:
           # Rename _virtual/ → virtual/ so Jekyll doesn't skip it
           if [ -d _virtual ]; then
             mv _virtual virtual
-            find . -name '*.js' -o -name '*.html' | xargs sed -i 's|_virtual/|virtual/|g; s|"_virtual"|"virtual"|g'
+            find . -type f \( -name '*.js' -o -name '*.html' \) | xargs sed -i 's|_virtual/|virtual/|g; s|"_virtual"|"virtual"|g'
           fi
           # Flatten node_modules/.pnpm/*/node_modules/PKG/... → deps/PKG/...
           if [ -d node_modules ]; then
@@ -60,11 +60,11 @@ jobs:
               fi
             done
             # Rewrite references: node_modules/.pnpm/<anything>/node_modules/<pkg>/ → deps/<pkg>/
-            find . -maxdepth 1 \( -name '*.js' -o -name '*.html' \) -exec \
+            find . -maxdepth 1 -type f \( -name '*.js' -o -name '*.html' \) -exec \
               sed -i -E 's|node_modules/\.pnpm/[^/]+/node_modules/|deps/|g' {} +
-            find virtual -name '*.js' -exec \
+            find virtual -type f -name '*.js' -exec \
               sed -i -E 's|\.\./node_modules/\.pnpm/[^/]+/node_modules/|../deps/|g' {} + 2>/dev/null || true
-            find deps -name '*.js' -exec \
+            find deps -type f -name '*.js' -exec \
               sed -i -E 's|\.\./\.pnpm/[^/]+/node_modules/||g' {} + 2>/dev/null || true
             rm -rf node_modules
           fi
