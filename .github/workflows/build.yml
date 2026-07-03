@@ -36,11 +36,38 @@ jobs:
 
       - name: Inject OPFS filesystem
         run: |
-          touch dist/.nojekyll
           mv dist/service-worker.js dist/sw-jit.js
           cp patches/sw-fs.js dist/sw-fs.js
           cp patches/service-worker.js dist/service-worker.js
           cp patches/preload.js dist/preload.js
+
+      - name: Fix paths for GitHub Pages (Jekyll skips _/ and ./ dirs)
+        run: |
+          cd dist
+          # Rename _virtual/ → virtual/ so Jekyll doesn't skip it
+          if [ -d _virtual ]; then
+            mv _virtual virtual
+            find . -name '*.js' -o -name '*.html' | xargs sed -i 's|_virtual/|virtual/|g; s|"_virtual"|"virtual"|g'
+          fi
+          # Flatten node_modules/.pnpm/*/node_modules/PKG/... → deps/PKG/...
+          if [ -d node_modules ]; then
+            mkdir -p deps
+            # Each package lives at node_modules/.pnpm/<name>@<ver>/node_modules/<pkg>/
+            for pkg_dir in node_modules/.pnpm/*/node_modules/*; do
+              pkg_name=$(basename "$pkg_dir")
+              if [ -d "$pkg_dir" ] && [ ! -d "deps/$pkg_name" ]; then
+                cp -r "$pkg_dir" "deps/$pkg_name"
+              fi
+            done
+            # Rewrite references: node_modules/.pnpm/<anything>/node_modules/<pkg>/ → deps/<pkg>/
+            find . -maxdepth 1 \( -name '*.js' -o -name '*.html' \) -exec \
+              sed -i -E 's|node_modules/\.pnpm/[^/]+/node_modules/|deps/|g' {} +
+            find virtual -name '*.js' -exec \
+              sed -i -E 's|\.\./node_modules/\.pnpm/[^/]+/node_modules/|../deps/|g' {} + 2>/dev/null || true
+            find deps -name '*.js' -exec \
+              sed -i -E 's|\.\./\.pnpm/[^/]+/node_modules/||g' {} + 2>/dev/null || true
+            rm -rf node_modules
+          fi
 
       - name: Deploy dist to branch
         env:
