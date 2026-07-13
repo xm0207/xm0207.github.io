@@ -2,7 +2,24 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+      - .dockerignore
+      - .eslintrc.json
+      - .gitignore
+      - .mise.toml
+      - .nomedia
+      - .prettierrc
+      - Dockerfile
+      - deno.json
+      - docker-compose.yml
+      - eslint.config.js
+      - eslint.config.mjs
+      - prettier.config.js
+      - prettier.config.mjs
+    branches:
+      - "main"
 
 permissions:
   contents: read
@@ -22,7 +39,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v6
 
       - name: Install pnpm
@@ -34,14 +51,20 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version: 25
           cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Get repository name
+        run: echo "REPOSITORY_NAME=${GITHUB_REPOSITORY#*/}" >> $GITHUB_ENV
+
       - name: Run Build
         run: pnpm build
+        env:
+          IS_GITHUB_PAGES: 'true'
+          REPO_NAME: ${{ env.REPOSITORY_NAME }}
 
       - name: Inject OPFS filesystem
         run: |
@@ -51,13 +74,15 @@ jobs:
           cp patches/preload.js dist/preload.js
 
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
-          path: 'dist'
+          path: './dist'
+          retention-days: 1
+          include-hidden-files: true
 
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

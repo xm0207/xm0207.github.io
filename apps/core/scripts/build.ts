@@ -26,7 +26,7 @@ async function main() {
 	 * 无名杀所使用的导入映射（import map，翻译来源MDN）
 	 */
 	const importMap: Record<string, string> = {
-		noname: "/noname.js",
+		noname: "./noname.js",
 		vue: "vue/dist/vue.esm-browser.js",
 		"pinyin-pro": "pinyin-pro",
 		dedent: "dedent",
@@ -53,13 +53,11 @@ async function main() {
 	 * 需要脱离本体单独输出的包体，无名杀中即为武将包、卡牌包和模式
 	 *
 	 * Individual译为“个体”，不过此处只是找个后续不太用得上的单词
-	 * 
-	 * `false`表示暂未存在可以构建的文件，后续会直接复制
 	 */
-	const individuals: Record<IndividualType, false | IndividualContent[]> = {
+	const individuals: Record<IndividualType, IndividualContent[]> = {
 		character: [],
 		mode: [{ name: "identity", index: "mode/identity.js", moderned: false }],
-		card: false,
+		card: [],
 	};
 
 	// #3446 - 通过moderned_characters配置更新character内容
@@ -68,20 +66,24 @@ async function main() {
 		if (!existsSync(join(root, index))) {
 			index = `character/${name}/index.js`;
 		}
-		(<IndividualContent[]>individuals.character).push({
+		individuals.character.push({
 			name,
 			index,
 			moderned: true,
 		});
 	}
 
-	// 将单独构建的包体全部复制到dist/src中，直接复制的包体直接复制
-	for (const [type, content] of Object.entries(individuals)) {
-		if (content === false) {
-			staticModules.push({ src: type, dest: "" });
-			continue;
-		}
+	// #3941 - 卡牌包均重写完毕
+	for (const file of readdirSync(join(root, "card"))) {
+		individuals.card.push({
+			name: getEntryName(file),
+			index: `card/${file}`,
+			moderned: false,
+		});
+	}
 
+	// 将单独构建的包体全部复制到dist/src中
+	for (const [type, content] of Object.entries(individuals)) {
 		for (const { index, moderned } of content) {
 			const src = moderned ? dirname(index) : index;
 			const dest = `src/${type}`;
@@ -94,10 +96,6 @@ async function main() {
 
 	// 编译脱离本体单独输出的包体
 	for (const [type, content] of Object.entries(individuals)) {
-		if (content === false) {
-			continue;
-		}
-
 		// 构建vite编译输入
 		const input: Record<string, string> = {};
 		for (const { name, index } of content) {
@@ -136,7 +134,7 @@ async function buildSelf(target: string | string[], importMap: Record<string, st
 			rollupOptions: {
 				preserveEntrySignatures: "strict",
 				treeshake: false,
-				external: ["vue"],
+				...(process.env.IS_GITHUB_PAGES || process.env.IS_CLOUDFLARE_PAGES === "true" ? {} : { external: ["vue"], }),
 				input: {
 					index: "index.html",
 					noname: "noname.js",
@@ -146,7 +144,12 @@ async function buildSelf(target: string | string[], importMap: Record<string, st
 					preserveModulesRoot: "./",
 
 					// 去掉 hash
-					entryFileNames: "[name].js", // 入口文件
+					entryFileNames: (chunkInfo) => {
+						if (chunkInfo.name.includes("node_modules")) {
+							return chunkInfo.name.replace(/node_modules/g, "external") + ".js"; // rename node_modules folder
+						}
+						return "[name].js"; // 入口文件
+					},
 					chunkFileNames: "[name].js", // 代码分块
 					assetFileNames: "[name][extname]", // 静态资源
 				},

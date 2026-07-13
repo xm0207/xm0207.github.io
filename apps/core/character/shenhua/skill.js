@@ -1256,30 +1256,13 @@ const skills = {
 			const { control } = await player
 				.chooseToDisable(true)
 				.set("ai", function (event, player, list) {
-					if (list.includes("equip5") && !player.hasSkill("drlt_jueyan_effect")) {
-						return "equip5";
-					}
-					if (list.includes("equip2")) {
-						return "equip2";
-					}
-					if (
-						list.includes("equip1") &&
-						player.countCards("h", function (card) {
-							return get.name(card, player) == "sha" && player.hasUseTarget(card);
-						}) -
-							player.getCardUsable("sha") >
-							1
-					) {
-						return "equip1";
-					}
-					if (
-						list.includes("equip5") &&
-						player.countCards("h", function (card) {
-							return get.type2(card, player) == "trick" && player.hasUseTarget(card);
-						}) > 1
-					) {
-						return "equip5";
-					}
+					if (list.includes("equip2") && (!player.getEquip(2) || (player.getEquip(2) && get.equipValue(player.getEquip(2)) <= 0))) return "equip2";
+					if (list.includes("equip1") && (!player.getEquip(1) || (player.getEquip(1) && get.equipValue(player.getEquip(1)) <= 0)) && (player.countCards("h", function(card) {
+						return get.name(card, player) == "sha" && player.hasUseTarget(card);
+					}) - player.getCardUsable("sha")) > 1) return "equip1";
+					if (list.includes("equip5") && (!player.getEquip(5) || (player.getEquip(5) && get.equipValue(player.getEquip(5)) <= 0)) && player.countCards("h", function(card) {
+						return get.type2(card,player) == "trick" && player.hasUseTarget(card);
+					}) > 1) return "equip5";
 				})
 				.forResult();
 			const bool = !player.hasSkill("drlt_jueyan_effect");
@@ -1309,27 +1292,14 @@ const skills = {
 			order: 13,
 			result: {
 				player(player) {
-					if (player.hasEnabledSlot("equip2")) {
-						return 1;
-					}
-					if (
-						player.hasEnabledSlot("equip1") &&
-						player.countCards("h", function (card) {
-							return get.name(card, player) == "sha" && player.hasValueTarget(card);
-						}) -
-							player.getCardUsable("sha") >
-							1
-					) {
-						return 1;
-					}
-					if (
-						player.hasEnabledSlot("equip5") &&
-						player.countCards("h", function (card) {
-							return get.type2(card, player) == "trick" && player.hasUseTarget(card);
-						}) > 1
-					) {
-						return 1;
-					}
+					if (!player.hasSkill("drlt_poshi")) return -1;
+					if (player.hasEnabledSlot("equip2") && (!player.getEquip(2) || (player.getEquip(2) && get.equipValue(player.getEquip(2)) <= 0))) return 1;
+					if (player.hasEnabledSlot("equip1") && (!player.getEquip(1) || (player.getEquip(1) && get.equipValue(player.getEquip(1)) <= 0)) && (player.countCards("h", function(card) {
+						return get.name(card, player) == "sha" && player.hasValueTarget(card);
+					}) - player.getCardUsable("sha")) > 1) return 1;
+					if (player.hasEnabledSlot("equip5") && (!player.getEquip(5) || (player.getEquip(5) && get.equipValue(player.getEquip(5)) <= 0)) && player.countCards("h", function(card) {
+						return get.type2(card, player) == "trick" && player.hasUseTarget(card);
+					}) > 1) return 1;
 					return -1;
 				},
 			},
@@ -2330,7 +2300,7 @@ const skills = {
 			});
 			next.ai = function (target) {
 				const player = _status.event.player;
-				if (player.storage.nzry_huaiju > 2 || player.hp > 2) {
+				if ((player.storage.nzry_huaiju > 2 || player.hp > 2) && (target.storage.nzry_huaiju == undefined || target.storage.nzry_huaiju <= 0)) {
 					return get.attitude(player, target);
 				}
 				return -1;
@@ -3667,6 +3637,7 @@ const skills = {
 			order: 2,
 			result: {
 				player(player) {
+					if (get.mode() === "identity" && player.hasUnknown(2)) return 0;
 					if (player.hp == 1) {
 						return 0;
 					}
@@ -4126,7 +4097,7 @@ const skills = {
 			}
 			switch (trigger.name) {
 				case "phaseJudge":
-					check = player.countCards("j");
+					check = player.hasJudge("lebu") || player.hasJudge("bingliang") || player.hasJudge("caomu");
 					break;
 				case "phaseDraw": {
 					let i,
@@ -4288,11 +4259,13 @@ const skills = {
 				locked: false,
 				mod: {
 					globalFrom(from, to, distance) {
-						let num = distance - from.getExpansions("tuntian").length;
-						if (_status.event.skill == "jixi_backup" || _status.event.skill == "gz_jixi_backup") {
-							num++;
+						if (from.getExpansions('tuntian')) {
+							let num = distance - from.getExpansions("tuntian").length;
+							if (_status.event.skill == "jixi_backup" || _status.event.skill == "gz_jixi_backup") {
+								num++;
+							}
+							return num;
 						}
-						return num;
 					},
 				},
 			},
@@ -4309,6 +4282,10 @@ const skills = {
 					if (_status.currentPhase == target || get.type(card) === "delay") {
 						return;
 					}
+					if (player.hasSkillTag("directHit_ai", true, {
+						target: target,
+						card: card,
+					}, true)) return;
 					if (card.name != "shuiyanqijunx" && get.tag(card, "loseCard") && target.countCards("he")) {
 						if (target.hasSkill("ziliang")) {
 							return 0.7;
@@ -9096,16 +9073,20 @@ const skills = {
 			game.broadcastAll(
 				function (card, player) {
 					_status.guhuoNode = card.copy("thrown");
-					if (lib.config.cardback_style != "default") {
-						_status.guhuoNode.style.transitionProperty = "none";
-						ui.refresh(_status.guhuoNode);
-						_status.guhuoNode.classList.add("infohidden");
-						ui.refresh(_status.guhuoNode);
-						_status.guhuoNode.style.transitionProperty = "";
+					if (window.decadeUI) {
+						_status.guhuoNode.style.background = "var(--cardback-url)";
 					} else {
-						_status.guhuoNode.classList.add("infohidden");
+						if (lib.config.cardback_style != "default") {
+							_status.guhuoNode.style.transitionProperty = "none";
+							ui.refresh(_status.guhuoNode);
+							_status.guhuoNode.classList.add("infohidden");
+							ui.refresh(_status.guhuoNode);
+							_status.guhuoNode.style.transitionProperty = "";
+						} else {
+							_status.guhuoNode.classList.add("infohidden");
+						}
+						_status.guhuoNode.style.transform = "perspective(600px) rotateY(180deg) translateX(0)";
 					}
-					_status.guhuoNode.style.transform = "perspective(600px) rotateY(180deg) translateX(0)";
 					player.$throwordered2(_status.guhuoNode);
 				},
 				trigger.cards[0],
@@ -9176,12 +9157,16 @@ const skills = {
 				}
 			}
 			await game.delayx();
-			game.broadcastAll(function (onEnd) {
+			game.broadcastAll(function (onEnd, guhuo_card) {
 				_status.event.onEnd01 = onEnd;
 				if (_status.guhuoNode) {
-					_status.guhuoNode.listenTransition(onEnd, 300);
+					if (window.decadeUI) {
+						_status.guhuoNode.style.background = guhuo_card.style.background;
+					} else {
+						_status.guhuoNode.listenTransition(onEnd, 300);
+					}
 				}
-			}, event.onEnd01);
+			}, event.onEnd01, trigger.cards[0]);
 			await game.delay(2);
 			if (!event.betrayer) {
 				return;

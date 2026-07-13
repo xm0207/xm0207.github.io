@@ -354,7 +354,7 @@ export default {
 				await player.draw(num);
 			}
 			let target = player.getNext();
-			while (target != player) {
+			while (target && target != player) {
 				if (!target.isUnseen()) {
 					target = target.getNext();
 				} else {
@@ -562,7 +562,7 @@ export default {
 				await target.draw();
 				num++;
 				target = target.getNext();
-				while (!player.isFriendOf(target)) {
+				while (target && !player.isFriendOf(target)) {
 					target = target.getNext();
 				}
 			}
@@ -4748,7 +4748,7 @@ export default {
 				}, "hs");
 			}
 			return player.hasCard(function (card) {
-				return card.hasTag("lianheng");
+				return typeof card.hasTag == "function" && card.hasTag("lianheng");
 			}, "hs");
 		},
 		chooseButton: {
@@ -4777,7 +4777,7 @@ export default {
 						if (_status.mode == "yingbian") {
 							return get.is.yingbian(card);
 						}
-						return card.hasTag("lianheng");
+						return typeof card.hasTag == "function" && card.hasTag("lianheng");
 					},
 					check(card) {
 						return 1 / Math.max(1, get.value(card));
@@ -5054,7 +5054,7 @@ export default {
 					if (cards.includes(card)) {
 						return false;
 					}
-					return card.hasTag("lianheng") || get.is.yingbian(card);
+					return typeof card.hasTag == "function" && (card.hasTag("lianheng") || get.is.yingbian(card));
 				});
 				if (!card) {
 					break;

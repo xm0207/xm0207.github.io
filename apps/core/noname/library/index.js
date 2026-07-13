@@ -32,7 +32,7 @@ export class Library {
 	updateURLS = updateURLs;
 	updateURL = updateURLs.github;
 	mirrorURL = updateURLs.coding;
-	hallURL = "";
+	hallURL = "127.0.0.1";
 	assetURL = assetURL;
 	userAgent = userAgentLowerCase;
 	characterDefaultPicturePath = characterDefaultPicturePath;
@@ -197,34 +197,38 @@ export class Library {
 			_status.emotion_cache = {};
 			const findFiles = function (name) {
 				const srcBase = `${lib.assetURL}image/emotion/${name}/`;
+				if (location.href.indexOf("//localhost") != -1) {
+					game.getFileList(
+						srcBase,
+						function (folders, files) {
+							if (!files.length) {
+								return;
+							}
+							_status.emotion_cache[name] = files.sort((a, b) => parseInt(a.split(".")[0]) - parseInt(b.split(".")[0]));
+						},
+						() => {}
+					);
+				}
+			};
+			const srcBase = `${lib.assetURL}image/emotion/`;
+			if (location.href.indexOf("//localhost") != -1) {
 				game.getFileList(
 					srcBase,
 					function (folders, files) {
-						if (!files.length) {
+						if (!folders.length) {
 							return;
 						}
-						_status.emotion_cache[name] = files.sort((a, b) => parseInt(a.split(".")[0]) - parseInt(b.split(".")[0]));
+						for (const folder of folders) {
+							if (folder == "throw_emotion") {
+								continue;
+							}
+							_status.emotion_cache[folder] = [];
+							findFiles(folder);
+						}
 					},
 					() => {}
 				);
-			};
-			const srcBase = `${lib.assetURL}image/emotion/`;
-			game.getFileList(
-				srcBase,
-				function (folders, files) {
-					if (!folders.length) {
-						return;
-					}
-					for (const folder of folders) {
-						if (folder == "throw_emotion") {
-							continue;
-						}
-						_status.emotion_cache[folder] = [];
-						findFiles(folder);
-					}
-				},
-				() => {}
-			);
+			}
 		},
 		//增加ui.window的监听
 		function () {
@@ -365,7 +369,7 @@ export class Library {
 					document.documentElement.style.removeProperty("--cardback-url");
 					return;
 			}
-			document.documentElement.style.setProperty("--cardback-url", `url(${lib.assetURL}/${url})`);
+			document.documentElement.style.setProperty("--cardback-url", `url(${lib.assetURL}` + (location.href.indexOf(".github.io") == -1 ? "" : "/" + (process.env.REPO_NAME || "noname")) +`/${url})`);
 		},
 	];
 	onfree = [];
@@ -1569,7 +1573,7 @@ export class Library {
 				},
 				update_link: {
 					name: "更新地址",
-					init: "coding",
+					init: "github",
 					unfrequent: true,
 					item: {
 						coding: "URC",
@@ -1771,7 +1775,7 @@ export class Library {
 			config: {
 				theme: {
 					name: "主题",
-					init: "woodden",
+					init: "simple",
 					item: {},
 					visualMenu: function (node, link) {
 						if (!node.menu) {
@@ -2004,7 +2008,7 @@ export class Library {
 				},
 				player_height_nova: {
 					name: "角色高度",
-					init: "short",
+					init: "long",
 					item: {
 						// auto:'自动',
 						short: "矮",
@@ -2340,7 +2344,7 @@ export class Library {
 				},
 				card_style: {
 					name: "卡牌样式",
-					init: "default",
+					init: "simple",
 					intro: "设置正面朝上的卡牌的样式",
 					item: {
 						wood: "木纹",
@@ -2480,7 +2484,7 @@ export class Library {
 				cardback_style: {
 					name: "卡背样式",
 					intro: "设置背面朝上的卡牌的样式",
-					init: "default",
+					init: "official",
 					item: {
 						// wood:'木纹',
 						// music:'音乐',
@@ -2683,7 +2687,7 @@ export class Library {
 								document.documentElement.style.removeProperty("--cardback-url");
 								return;
 						}
-						document.documentElement.style.setProperty("--cardback-url", `url(${lib.assetURL}/${url})`);
+						document.documentElement.style.setProperty("--cardback-url", `url(${lib.assetURL}` + (location.href.indexOf(".github.io") == -1 ? "" : "/" + (process.env.REPO_NAME || "noname")) +`/${url})`);
 					},
 					unfrequent: true,
 				},
@@ -3038,7 +3042,7 @@ export class Library {
 				zhishixian: {
 					name: "指示线",
 					intro: "设置卡牌、技能的指示特效",
-					init: "default",
+					init: "Jinlong",
 					unfrequent: true,
 					item: {
 						default: "默认",
@@ -3808,13 +3812,13 @@ export class Library {
 				card_animation_info: {
 					name: "卡牌动画信息(Beta)",
 					intro: "开启后会在卡牌动画中显示一些信息来源并启用虚拟牌动画(Beta测试功能，如遇异常可关闭该功能)",
-					init: false,
+					init: true,
 					unfrequent: false,
 				},
 				animation_choose_to_move: {
 					name: "移动卡牌动画",
 					intro: "开启后将启用chooseToMove（观星类）的动画",
-					init: true,
+					init: false,
 					unfrequent: false,
 				},
 				skill_animation_type: {
@@ -3906,7 +3910,7 @@ export class Library {
 				cardshape: {
 					name: "手牌显示",
 					intro: "将手牌设置为正方形或长方形",
-					init: "default",
+					init: "oblong",
 					unfrequent: true,
 					item: {
 						default: "默认",
@@ -4312,7 +4316,7 @@ export class Library {
 				},
 				show_log: {
 					name: "历史记录栏",
-					init: "off",
+					init: "left",
 					intro: "在屏幕中部显示出牌文字记录",
 					unfrequent: true,
 					item: {
@@ -4845,7 +4849,7 @@ export class Library {
 				show_tip: {
 					name: "显示tip标记",
 					intro: "显示类似手杀的武将标记效果，如：<br><li>蒺藜 5<br><li>放逐 技能失效<br><li>渐营 ♥7",
-					init: false,
+					init: true,
 					unfrequent: true,
 					onclick(bool) {
 						game.saveConfig("show_tip", bool);
@@ -4922,7 +4926,7 @@ export class Library {
 				},
 				show_discardpile: {
 					name: "暂停时显示弃牌堆",
-					init: false,
+					init: true,
 					unfrequent: true,
 				},
 				show_extensionmaker: {
@@ -4938,7 +4942,7 @@ export class Library {
 				show_characternamepinyin: {
 					name: "显示武将名注解",
 					intro: "在武将资料卡显示武将名及其注解、性别、势力、体力等信息",
-					init: "showCodeIdentifier",
+					init: "showPinyin",
 					unfrequent: true,
 					item: {
 						doNotShow: "不显示",
@@ -5068,7 +5072,7 @@ export class Library {
 				},
 				equip_audio: {
 					name: "装备配音",
-					init: false,
+					init: true,
 				},
 				repeat_audio: {
 					name: "播放重复语音",
@@ -5916,7 +5920,7 @@ export class Library {
 				},
 				connect_enable_commoner: {
 					name: "启用平民",
-					init: false,
+					init: true,
 					restart: true,
 					frequent: false,
 					get intro() {
@@ -5961,7 +5965,7 @@ export class Library {
 				},
 				connect_enable_year_limit: {
 					name: "启用年机制",
-					init: false,
+					init: true,
 					restart: true,
 					frequent: false,
 					get intro() {
@@ -6269,7 +6273,7 @@ export class Library {
 				},
 				auto_mark_identity: {
 					name: "自动标记身份",
-					init: false,
+					init: true,
 					intro: "根据角色的出牌行为自动标记可能的身份",
 				},
 				enhance_zhu: {
@@ -6564,7 +6568,7 @@ export class Library {
 				},
 				enable_commoner: {
 					name: "启用平民",
-					init: false,
+					init: true,
 					restart: true,
 					frequent: false,
 					intro: "开启后游戏中将有一个平民（身份）加入游戏。<br>具体规则请查看帮助。",
@@ -6588,7 +6592,7 @@ export class Library {
 				},
 				enable_year_limit: {
 					name: "启用年机制",
-					init: false,
+					init: true,
 					restart: true,
 					frequent: false,
 					intro: "开启后将会加入年机制。<br>年机制的具体规则请查看帮助。",
@@ -7557,7 +7561,7 @@ export class Library {
 				},
 				read_clipboard: {
 					name: "读取邀请链接",
-					init: true,
+					init: false,
 					frequent: true,
 					intro: "读取剪贴板以解析邀请链接自动加入联机房间",
 				},
@@ -10492,6 +10496,18 @@ export class Library {
 			disable_judge: "已废除",
 			disable_judge_info: "判定区已废除",
 			disable_judge_bg: "废",
+			empty_equip1: "空武器",
+			empty_equip1_info: "武器栏为空",
+			empty_equip2: "空防具",
+			empty_equip2_info: "防具栏为空",
+			empty_equip3: "空防御坐骑",
+			empty_equip3_info: "防御坐骑栏为空",
+			empty_equip4: "空攻击坐骑",
+			empty_equip4_info: "攻击坐骑栏为空",
+			empty_equip5: "空宝物",
+			empty_equip5_info: "宝物栏为空",
+			empty_equip6: '空特殊装备',
+			empty_equip6_info: '特殊装备栏为空',
 			pss: "手势",
 			pss_paper: "布",
 			pss_scissor: "剪刀",
@@ -10506,12 +10522,14 @@ export class Library {
 			group_qun: "群势力",
 			group_key: "键势力",
 			group_jin: "晋势力",
+			group_western: "西势力",
 			group_wei_bg: "魏",
 			group_shu_bg: "蜀",
 			group_wu_bg: "吴",
 			group_qun_bg: "群",
 			group_key_bg: "键",
 			group_jin_bg: "晋",
+			group_western_bg: "西",
 			zhengsu: "整肃",
 			zhengsu_leijin: "擂进",
 			zhengsu_bianzhen: "变阵",
@@ -10651,8 +10669,12 @@ export class Library {
 						}
 					}
 				} catch (e) {
-					console.log(e);
-					console.log("invalid message: " + messageevent.data);
+					if (message[1] == "cardPile") {
+						console.log("Request cardPile data from server.");
+					} else {
+						console.log(e);
+						console.log("invalid message: " + messageevent.data);
+					}
 					return;
 				}
 				lib.message.client[message.shift()].apply(null, message);
@@ -10836,7 +10858,7 @@ export class Library {
 		group_qun: { fullskin: true },
 		group_key: { fullskin: true },
 		group_jin: { fullskin: true },
-
+		group_western: { fullskin: true },
 		db_atk1: {
 			type: "db_atk",
 			fullimage: true,
@@ -12034,15 +12056,37 @@ export class Library {
 	message = {
 		server: {
 			cardPile() {
-				this.send(
-					JSON.stringify({
-						type: "cardPile",
-						data: {
-							drawPile: Array.from(ui.cardPile.children),
-							discardPile: Array.from(ui.discardPile.children),
-						},
-					})
-				);
+				let draw_pile_array = Array.from(ui.cardPile.children);
+				let send_draw_pile_array = [];
+				let discard_pile_array =Array.from(ui.discardPile.children);
+				let send_discard_pile_array = [];
+				for (let i = 0; i < draw_pile_array.length; i++) {
+					let card = {};
+					card.name = draw_pile_array[i].name;
+					card.number = draw_pile_array[i].number;
+					card.suit = draw_pile_array[i].suit;
+					send_draw_pile_array.add(card);
+				}
+				for (let i = 0; i < discard_pile_array.length; i++) {
+					let card = {};
+					card.name = discard_pile_array[i].name;
+					card.number = discard_pile_array[i].number;
+					card.suit = discard_pile_array[i].suit;
+					send_discard_pile_array.add(card);
+				}
+				send_draw_pile_array.sort(function (a, b) {
+					return a.number - b.number;
+				});
+				send_discard_pile_array.sort(function (a, b) {
+					return a.number - b.number;
+				});
+				this.send(JSON.stringify({
+					type: "cardPile",
+					data: {
+						drawPile: send_draw_pile_array,
+						discardPile: send_discard_pile_array
+					}
+				}), "cardPile");
 			},
 			/**
 			 * @this {import("./element/client.js").Client}
@@ -13715,6 +13759,13 @@ export class Library {
 		],
 		[
 			"慢",
+			{
+				color: "#5a6968",
+				nature: "graymm",
+			},
+		],
+		[
+			"嗔",
 			{
 				color: "#5a6968",
 				nature: "graymm",

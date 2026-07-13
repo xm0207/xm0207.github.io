@@ -646,7 +646,7 @@ const translates = {
 	xin_jushou: "手杀界沮授",
 	xin_jushou_prefix: "手杀界",
 	xinjianying: "渐营",
-	xinjianying_info: "①当你于出牌阶段内使用与此阶段你使用的上一张牌点数或花色相同的牌时，你可以摸一张牌。②出牌阶段限一次，你可以将一张牌当做任意基本牌使用。若你于此阶段内使用的上一张牌有花色，则此牌的花色视为上一张牌的花色。",
+	xinjianying_info: "①当你使用牌时，若此牌与你使用的上一张牌花色或点数相同，则你可以摸一张牌。②出牌阶段限一次，你可以将一张牌当做任意基本牌使用且无次数限制。若你于此阶段内使用的上一张牌有花色，则此牌的花色视为上一张牌的花色。",
 	re_xunyu: "手杀界荀彧",
 	re_xunyu_prefix: "手杀界",
 	rejieming: "节命",
@@ -931,6 +931,7 @@ const translates = {
 	mbcmfangzhu: "放逐",
 	mbcmfangzhu_info: `${get.poptip("rule_chihengji")}。出牌阶段限一次，你可以选择一名不为你上个出牌阶段发动〖放逐〗的目标的其他角色，选择一项：⒈令其不能使用手牌中的非锦囊牌直到其回合结束；⒉令其所有非Charlotte技能失效直到其回合结束。`,
 	mbjuejin: "决进",
+	mbjuejinContentAfter: "决进",
 	mbjuejin_info: `${get.poptip("rule_chihengji")}，限定技。出牌阶段，你可以令所有角色依次将体力值调整至1并获得X点护甲（X为一名角色以此法减少的体力值且你以此法获得的护甲数额外+2）。然后你将牌堆、弃牌堆、场上及所有角色手牌中的【闪】、【桃】和【酒】移出游戏且增加全局技能“${get.poptip({
 		id: "juejin_xiangsicunwei",
 		name: "向死存魏",

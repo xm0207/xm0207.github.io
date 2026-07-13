@@ -7,6 +7,12 @@ import "vue/dist/vue.esm-browser.js";
 
 (async () => {
 	try {
+		const [core, ...version] = get.coreInfo();
+		window.useNewDpr = true;
+		if ((core === "chrome" && !get.checkVersion([128, 0, 0], version)) || (core === "firefox" && !get.checkVersion([126, 0, 0], version))) {
+			window.useNewDpr = false;
+		}
+
 		lib.device = device;
 
 		// 预加载脚本
@@ -20,7 +26,7 @@ import "vue/dist/vue.esm-browser.js";
 				// 否则（如 macOS 桌面 Safari/Chrome、普通手机浏览器）应走 browser 分支，避免请求 /cordova.js 并卡死在 deviceready。
 				const isCordovaLike = typeof window.cordova !== "undefined" || typeof window.NonameAndroidBridge !== "undefined" || typeof window.noname_shijianInterfaces !== "undefined";
 
-				if (import.meta.env.DEV || typeof lib.device == "undefined" || !isCordovaLike) {
+				if (import.meta.env.DEV || typeof lib.device == "undefined" || !isCordovaLike  || location.href.indexOf("//localhost") == -1) {
 					return import("./init/browser.js");
 				} else {
 					return import("./init/cordova.js");

@@ -3187,6 +3187,7 @@ const skills = {
 	},
 	// 星夏侯霸
 	starweigu: {
+		audio: 2,
 		trigger: {
 			player: "useCardToPlayer",
 			target: "useCardToTarget",
@@ -3195,7 +3196,7 @@ const skills = {
 			if (!get.is.damageCard(event.card)) {
 				return false;
 			}
-			if (event.targets.length !== 1) {
+			if (event.targets?.length !== 1) {
 				return false;
 			}
 			if (!player.hasCards("he", card => get.info("starweigu").isSelf(card, player) && lib.filter.cardDiscardable(card, player, "starweigu"))) {
@@ -3280,7 +3281,7 @@ const skills = {
 									}
 								} else if (button.link === "addtarget") {
 									let num = 0;
-									targets.forEach(target => (num += get.effect(target, { name: card }, player2, player2)));
+									targets.forEach(target => (num += get.effect(target, { name: card.name }, player2, player2)));
 									return num;
 								}
 								return 0;
@@ -3331,6 +3332,7 @@ const skills = {
 	},
 	starjuefa: {
 		//批量改名前记得这里有starweigu
+		audio: 2,
 		enable: "phaseUse",
 		skillAnimation: true,
 		limited: true,
@@ -3345,6 +3347,7 @@ const skills = {
 		},
 		subSkill: {
 			effect: {
+				audio: "starjuefa",
 				charlotte: true,
 				forced: true,
 				init(player, skill) {
@@ -3375,6 +3378,7 @@ const skills = {
 				},
 			},
 			remove: {
+				audio: "starjuefa",
 				charlotte: true,
 				forced: true,
 				trigger: {
@@ -6428,6 +6432,11 @@ const skills = {
 					return true;
 				}
 				return false;
+			},
+			effect: {
+				target(card, player, target, current) {
+					if (card.name == "sha" && target.isDamaged() && target.getFriends().length > 0) return "zeroplayertarget";
+				}
 			},
 		},
 	},
@@ -12766,6 +12775,26 @@ const skills = {
 				player.gain(cards, "gain2");
 			}
 		},
+		ai:{
+			//modified tuntian ai effect
+			effect: {
+				target(card, player, target, current) {
+					if (!target.hasFriend() && !player.hasUnknown()) return;
+					if (_status.currentPhase == target) return;
+					if (player.hasSkill("moying2")) return;
+					if (get.tag(card, "loseCard") && target.countCards("e")) {
+						if (target.hasSkill("ziliang")) return 0.7;
+						return [0.5, Math.max(2, target.countCards("h"))];
+					}
+				}
+			},
+			nodiscard: true,
+			nolose: true,
+			noh: true,
+			skillTagFilter: function(player) {
+				return !player.hasSkill("moying2");
+			},
+		}
 	},
 	//moying2: {},
 	juanhui: {
@@ -14545,6 +14574,7 @@ const skills = {
 			}
 			"step 2";
 			target.chooseControl("自动分配", "手动分配").set("prompt", "【严教】：是否让系统自动分配方案？").ai = function () {
+				if (get.attitude(player, target) <= 0) return 1;
 				return 0;
 			};
 			"step 3";
@@ -16028,7 +16058,7 @@ const skills = {
 			event.num = player.storage.xinfu_lveming;
 			event.toequip = [];
 			"step 1";
-			var equip = get.cardPile(
+			var equip = get.cardPile2(
 				function (card) {
 					var bool1 = true;
 					for (var i = 0; i < event.toequip.length; i++) {
@@ -16036,7 +16066,7 @@ const skills = {
 							bool1 = false;
 						}
 					}
-					return get.type(card) == "equip" && !event.toequip.includes(card) && target.hasEmptySlot(card) && bool1;
+					return get.type(card) == "equip" && !event.toequip.includes(card) && target.hasEmptySlot(get.subtype(card)) && bool1;
 				},
 				false,
 				"random"

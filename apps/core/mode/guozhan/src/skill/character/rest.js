@@ -193,10 +193,10 @@ export default {
 			const list = [],
 				previous = player.getPrevious(),
 				next = player.getNext();
-			if (previous?.isIn() && previous.identity == "qun") {
+			if (previous?.isIn() && previous?.identity == "qun") {
 				list.add("gz_ol_zezhu");
 			}
-			if (next?.isIn() && next.identity == "wei") {
+			if (next?.isIn() && next?.identity == "wei") {
 				list.add("gz_ol_chenggong");
 			}
 			if (list.length) {
@@ -5915,7 +5915,7 @@ export default {
 				direct: true,
 				content() {
 					"step 0";
-					player.chooseCard(get.prompt("gzrebushi"), "he", "失去1个“义舍”标记，将一张牌交给" + get.translation(trigger.player) + "并摸两张牌").set("ai", function (card) {
+					player.chooseCard(get.prompt("gzrebushi"), "he", "失去1个“布施”标记，将一张牌交给" + get.translation(trigger.player) + "并摸两张牌").set("ai", function (card) {
 						var player = _status.event.player;
 						var trigger = _status.event.getTrigger();
 						var target = trigger.player;
@@ -7604,7 +7604,7 @@ export default {
 			}, "h");
 		},
 		filterCard(card) {
-			return !card.hasTag("lianheng") && !card.hasGaintag("_lianheng");
+			return typeof card.hasTag == "function" && !card.hasTag("lianheng") && !card.hasGaintag("_lianheng");
 		},
 		position: "h",
 		discard: false,
@@ -9247,10 +9247,10 @@ export default {
 						var next = player.getNext(),
 							prev = player.getPrevious(),
 							siege = [];
-						if (player.siege(next)) {
+						if (next && player.siege(next)) {
 							siege.push(next.getNext());
 						}
-						if (player.siege(prev)) {
+						if (prev && player.siege(prev)) {
 							siege.push(prev.getPrevious());
 						}
 						if (siege.length) {
@@ -11536,7 +11536,7 @@ export default {
 			var target = trigger.player;
 			target.addTempSkill("gzpozhen2");
 			var list = game.filterPlayer(function (current) {
-				return current != target && (current.inline(target) || (current == target.getNext().getNext() && current.siege(target.getNext())) || (current == target.getPrevious().getPrevious() && current.siege(target.getPrevious())));
+				return current != target && (current.inline(target) || (current == target.getNext()?.getNext() && current.siege(target.getNext())) || (current == target.getPrevious()?.getPrevious() && current.siege(target.getPrevious())));
 			});
 			if (list.length) {
 				list.add(target);
@@ -16366,7 +16366,7 @@ export default {
 		},
 		content() {
 			var target = player.getNext();
-			player.viewCharacter(target, 1);
+			if (target) player.viewCharacter(target, 1);
 		},
 	},
 	_aozhan_judge: {
@@ -16403,6 +16403,10 @@ export default {
 			return true;
 		},
 		content() {
+			game.broadcastAll(function() {
+				if (!window.decadeUI) return;
+				decadeUI.animation.playSpine("aozhan", { scale: 1.0 });
+			});
 			var color = get.groupnature(player.group, "raw");
 			if (player.isUnseen()) {
 				color = "fire";
@@ -16642,14 +16646,14 @@ export default {
 		prompt: "将至多三张可合纵的牌交给一名与你势力不同的角色，或未确定势力的角色，若你交给与你势力不同的角色，则你摸等量的牌",
 		filter(event, player) {
 			return player.hasCard(function (card) {
-				return card.hasTag("lianheng") || card.hasGaintag("_lianheng");
+				return typeof card.hasTag == "function" && (card.hasTag("lianheng") || card.hasGaintag("_lianheng"));
 			}, "h");
 		},
 		filterCard(card) {
 			if (get.itemtype(card) != "card") {
 				return false;
 			}
-			return card.hasTag("lianheng") || card.hasGaintag("_lianheng");
+			return typeof card.hasTag == "function" && (card.hasTag("lianheng") || card.hasGaintag("_lianheng"));
 		},
 		filterTarget(card, player, target) {
 			if (target == player) {
@@ -16700,16 +16704,16 @@ export default {
 					if (player.isMajor()) {
 						return 0;
 					}
-					if (!player.isMajor() && huoshao && player.getNext().isMajor()) {
+					if (!player.isMajor() && huoshao && player.getNext()?.isMajor()) {
 						return -2;
 					}
-					if (!player.isMajor() && huoshao && player.getNext().isMajor() && player.getNext().getNext().isMajor()) {
+					if (!player.isMajor() && huoshao && player.getNext()?.isMajor() && player.getNext()?.getNext()?.isMajor()) {
 						return -3;
 					}
-					if (!player.isMajor() && huoshao && !target.isMajor() && target.getNext().isMajor() && target.getNext().getNext().isMajor()) {
+					if (!player.isMajor() && huoshao && !target.isMajor() && target.getNext()?.isMajor() && target.getNext()?.getNext()?.isMajor()) {
 						return 3;
 					}
-					if (!player.isMajor() && huoshao && !target.isMajor() && target.getNext().isMajor()) {
+					if (!player.isMajor() && huoshao && !target.isMajor() && target.getNext()?.isMajor()) {
 						return 1.5;
 					}
 					return 1;
@@ -19731,7 +19735,7 @@ export default {
 				}
 			}
 			if (config.siege) {
-				if (target == player.getNext().getNext() || target == player.getPrevious().getPrevious()) {
+				if (target == player.getNext()?.getNext() || target == player.getPrevious()?.getPrevious()) {
 					return true;
 				}
 			}

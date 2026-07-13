@@ -1,19 +1,20 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import path from "path";
 
 const port = {
-	client: 8080,
+	client: 8081,
 	server: 8089,
 };
 
 export default defineConfig({
 	appType: "mpa",
 	root: ".",
-	base: "./",
+	base: "",
 	resolve: {
 		alias: {
-			"@": "/noname",
-			noname: "/noname.js",
+			"@": path.resolve(__dirname, "noname"),
+			"noname": path.resolve(__dirname, "noname.js"),
 		},
 	},
 	plugins: [vue()],

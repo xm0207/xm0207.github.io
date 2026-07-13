@@ -377,8 +377,11 @@ const skills = {
 			order: 1,
 			result: {
 				target(player, target) {
-					if (get.attitude(player, target) > 0) {
-						return Math.sqrt(target.countCards("he"));
+					if (get.attitude(player, target) > 0 && target.countCards("h") > 2 && target.hp > 2) {
+						return 2 + Math.sqrt(target.countCards("he"));
+					}
+					else if (get.attitude(player, target) < 0) {
+						return -Math.sqrt(target.countCards("he"));
 					}
 					return 0;
 				},
@@ -1452,6 +1455,19 @@ const skills = {
 				await target.draw(num);
 			}
 		},
+		ai: {
+			order: 2,
+			expose: 0.3,
+			threaten: 1.8,
+			result: {
+				target(player, target) {
+					if (target.hasSkillTag("noturn")) return 0;
+					if (target.countCards("h") < 3) return 0;
+					if (target.isTurnedOver()) return 2;
+					return -1 / (target.countCards("h") + 1);
+				}
+			}
+		},
 	},
 	xinzhige: {
 		enable: "phaseUse",
@@ -1623,7 +1639,7 @@ const skills = {
 				}
 				return _status.event.getParent().type == "phase" ? player.getUseValue(card) : 1;
 			},
-			backup(links, player) {
+			backup(links) {
 				return {
 					filterCard: true,
 					audio: "taoluan",
@@ -2594,6 +2610,12 @@ const skills = {
 			);
 		},
 		logTarget: "player",
+		check: function(event, player) {
+			if (get.attitude(player, event.player) >= 0) return true;
+			if (player.hasSkill("funan_jiexun")) return true;
+			if (event.cards.length > 1) return true;
+			return event.cards.length > 0 && event.respondTo.length > 1 && get.value(event.cards[0]) > get.value(event.respondTo[1]);
+		},
 		async content(event, trigger, player) {
 			if (!player.hasSkill("funan_jiexun")) {
 				let cards = [];
@@ -2734,6 +2756,7 @@ const skills = {
 						return coeff * get.attitude(player, target);
 					},
 				})
+				.set("coeff", num1 >= num2 ? 1 : -1)
 				.forResult();
 
 			event.result.cost_data = {
@@ -2760,7 +2783,7 @@ const skills = {
 					.forResult();
 
 				if (result?.cards?.length > 0 && result.autochoose && result.cards?.length === result.rawcards?.length) {
-					player.clearMarkMark("xinjiexun", false);
+					player.clearMark("xinjiexun", false);
 					player.addSkill("funan_jiexun");
 				}
 			}
@@ -3042,6 +3065,9 @@ const skills = {
 			rouhe: {
 				audio: "qingxian",
 				trigger: { player: "recoverEnd" },
+				filter(event, player) {
+					return !_status.dying.length;
+				},
 				async cost(event, trigger, player) {
 					if (_status.dying.length) {
 						player.storage.qingxian ??= 0;
@@ -3088,7 +3114,7 @@ const skills = {
 				audio: "qingxian",
 				trigger: { player: "damageEnd" },
 				filter(event, player) {
-					return event.source && event.source.isIn();
+					return event.source && event.source.isIn() && !_status.dying.length;
 				},
 				check(event, player) {
 					if (get.attitude(player, event.source) > 0 && event.source.isHealthy()) {
@@ -3214,7 +3240,7 @@ const skills = {
 				},
 				trigger: { player: "damageEnd" },
 				filter(event, player) {
-					return event.source && event.source.isIn() && event.source != player;
+					return event.source && event.source.isIn() && event.source != player && !_status.dying.length;
 				},
 				check(event, player) {
 					return get.attitude(player, event.source) < 0;
@@ -3258,6 +3284,9 @@ const skills = {
 
 					return triggername === "dyingAfter" ? player.storage.juexiang_lie : 1;
 				},
+				filter(event, player) {
+					return !_status.dying.length;
+				},
 				async cost(event, trigger, player) {
 					if (event.triggername == "dyingAfter") {
 						if (!player.countMark("juexiang_lie")) {
@@ -3298,7 +3327,7 @@ const skills = {
 				},
 				trigger: { player: "damageEnd" },
 				filter(event, player) {
-					return event.source && event.source.isIn() && event.source != player;
+					return event.source && event.source.isIn() && event.source != player && !_status.dying.length;
 				},
 				check(event, player) {
 					var att = get.attitude(player, event.source);
@@ -3334,6 +3363,9 @@ const skills = {
 					content: "info",
 				},
 				trigger: { player: "recoverEnd" },
+				filter(event, player) {
+					return !_status.dying.length;
+				},
 				async cost(event, trigger, player) {
 					event.result = await player
 						.chooseTarget({
@@ -3404,9 +3436,9 @@ const skills = {
 		locked: false,
 		async content(event, trigger, player) {
 			await player.addToExpansion({
-				cards: get.cards(), 
+				cards: get.cards(),
 				animate: "gain2",
-				gaintag: ["bizhuan"]
+				gaintag: ["bizhuan"],
 			});
 		},
 		mod: {
@@ -5598,8 +5630,11 @@ const skills = {
 			order: 1,
 			result: {
 				target(player, target) {
-					if (get.attitude(player, target) > 0) {
-						return Math.sqrt(target.countCards("he"));
+					if (get.attitude(player, target) > 0 && target.countCards("h") > 2 && target.hp > 2) {
+						return 2 + Math.sqrt(target.countCards("he"));
+					}
+					else if (get.attitude(player, target) < 0) {
+						return -Math.sqrt(target.countCards("he"));
 					}
 					return 0;
 				},
@@ -8330,6 +8365,7 @@ const skills = {
 		group: ["zhanjue4"],
 		ai: {
 			damage: true,
+			nokeep: true,
 			order(item, player) {
 				if (player.countCards("h") > 1) {
 					return 0.8;
@@ -8640,7 +8676,8 @@ const skills = {
 			return (
 				get.suit(event.card) == "spade" &&
 				_status.currentPhase == event.player &&
-				event.targets && event.player.isPhaseUsing() &&
+				event.targets &&
+				event.player.isPhaseUsing() &&
 				event.targets.length &&
 				event.player != player &&
 				game.countPlayer2(function (current) {
@@ -9339,6 +9376,9 @@ const skills = {
 		ai: {
 			maixie: true,
 			maixie_hp: true,
+			threaten: function(player, target) {
+				return target.hp > 1 || target.hujia ? 0.8 : 1;
+			}
 		},
 	},
 	duodao: {
@@ -14174,14 +14214,17 @@ const skills = {
 					var num = player.maxHp - player.hp;
 					var players = game.filterPlayer();
 					for (var i = 0; i < players.length; i++) {
+						let has_bad_equip = players[i].countCards("e", function(card) { return get.equipValue(card) <= 0;}) > 0;
 						if (get.attitude(player, players[i]) > 0) {
 							list1.push(players[i]);
-						} else if (get.attitude(player, players[i]) < 0) {
+						} else if (get.attitude(player, players[i]) < 0 && !has_bad_equip) {
 							list2.push(players[i]);
 						}
 					}
 					list1.sort(function (a, b) {
-						return a.countCards("e") - b.countCards("e");
+						if (a.countCards("e", function(card) { return get.equipValue(card) <= 0;}) > 0) return -1;
+						if (b.countCards("e", function(card) { return get.equipValue(card) <= 0;}) > 0) return -1;
+						return a.countCards("e", function(card) { return get.equipValue(card) > 0;}) - b.countCards("e", function(card) { return get.equipValue(card) > 0;});
 					});
 					list2.sort(function (a, b) {
 						return b.countCards("e") - a.countCards("e");
@@ -14745,7 +14788,6 @@ const skills = {
 				if (current.hasSkill("xiansix") && current.getExpansions("xiansi").length > 1) {
 					bool = true;
 				}
-				break;
 			}
 			if (!bool && (!target.hasSkill("xiansix") || target.getExpansions("xiansi").length <= 1)) {
 				return false;

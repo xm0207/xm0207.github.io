@@ -1967,6 +1967,11 @@ export default {
 		},
 		async content(event, trigger, player) {
 			game.broadcastAll(function (id) {
+				if (window.decadeUI) {
+					ui.todiscard = [];
+					ui.clear();
+					return;
+				}
 				var todiscard = ui.todiscard[id];
 				delete ui.todiscard[id];
 				if (todiscard) {

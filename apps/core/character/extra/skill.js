@@ -1295,8 +1295,10 @@ const skills = {
 		ai: {
 			effect: {
 				player_use(card, player) {
-					if (get.type(card) == "trick" && get.value(card) < 6) {
-						return [0, -2];
+					if (get.type(card) == "trick") {
+						if (get.tag(card, "draw") && player.hp > 2) return get.value(card);
+						if (get.tag(card, "damage") && player.hp + player.countCards("h", "tao") > 1) return get.value(card);
+						return "zeroplayertarget";
 					}
 				},
 			},
@@ -1596,7 +1598,17 @@ const skills = {
 			await player.addSkills("jilue");
 		},
 		derivation: ["jilue", "jilue_guicai", "jilue_fangzhu", "jilue_jizhi", "jilue_zhiheng", "jilue_wansha"],
-		ai: { combo: "renjie" },
+		ai: {
+			combo: "renjie",
+			effect: {
+				player(card, player, target, current) {
+					var draw_two_cards = get.tag(card, "draw") > 1;
+					if (player.hasSkill("renjie2") && !player.hasSkill("jilue") && !draw_two_cards) {
+						return "zeroplayertarget";
+					}
+				}
+			}
+		},
 	},
 	jilue: {
 		audio: 2,
@@ -2236,12 +2248,8 @@ const skills = {
 								if (target.hp > 2 && (target.isHealthy() || target.hasSkillTag("maixie"))) {
 									return false;
 								}
-								if (allUse || target.hp == 1) {
-									return true;
-								}
-								if (target.hp == 2 && target.countCards("he") <= 2) {
-									return true;
-								}
+								if (target.hp == 1 && target.countCards('h') < 4) return true;
+								if (target.hp == 2 && target.countCards('h') < 4) return true;
 							}
 							return false;
 						});
@@ -2260,12 +2268,8 @@ const skills = {
 							if (target.hp > 2 && (target.isHealthy() || target.hasSkillTag("maixie"))) {
 								return 0;
 							}
-							if (allUse || target.hp == 1) {
-								return att;
-							}
-							if (target.hp == 2 && target.countCards("he") <= 2) {
-								return att * 0.7;
-							}
+							if (target.hp == 1 && target.countCards('h') < 4) return att;
+							if (target.hp == 2 && target.countCards('h') < 4) return att * 0.7;
 							return 0;
 						}
 						return -1;
@@ -3249,8 +3253,17 @@ const skills = {
 								return 0.6;
 							}
 						},
+						player(card, player, target, current) {
+							var type = get.type(card);
+							if (player.getCards("h").length - player.getHandcardLimit() <= 0) {
+								if (type == "trick" || type == "delay") return "zeroplayertarget";
+							}
+						},
 					},
 					respondSha: true,
+					order: 0,
+					useful: -1,
+					value: -1,
 				},
 			},
 			2: {
@@ -3280,6 +3293,9 @@ const skills = {
 						},
 					},
 					respondSha: true,
+					order: 0,
+					useful: -1,
+					value: -1,
 				},
 			},
 		},
@@ -3342,7 +3358,12 @@ const skills = {
 					const next = player.chooseTarget("请选择【结营】的目标");
 					next.set("forced", true);
 					next.set("filterTarget", (card, player, target) => target != player && !target.isLinked());
-					next.set("ai", () => 1 + Math.random());
+					next.set("ai", function (target) {
+						if (get.attitude(player, target) < 0) {
+							return 2;
+						}
+						return 1 + Math.random();
+					});
 
 					event.result = await next.forResult();
 				},
@@ -3505,7 +3526,7 @@ const skills = {
 			source: "damageSource",
 		},
 		filter(event, player) {
-			if (player.storage.drlt_duorui.length) {
+			if (player.storage.drlt_duorui.length || event.player === player) {
 				return false;
 			}
 			return event.player.isIn() && _status.currentPhase == player;
@@ -3906,6 +3927,12 @@ const skills = {
 					 * @returns {number}
 					 */
 					function processAI(target) {
+						if (get.attitude(player, target) > 0) {
+							return 0;
+						}
+						if (target.isTurnedOver() || target.countCards("h") < 3) {
+							return 0;
+						}
 						const th = target.countCards("h");
 						const att = get.attitude(_status.event.player, target);
 						for (const skill in target.skills) {

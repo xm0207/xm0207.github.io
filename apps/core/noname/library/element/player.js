@@ -1573,21 +1573,14 @@ export class Player extends HTMLDivElement {
 			return 0;
 		}
 		if (get.type(card, null, target) == "equip") {
-			let eff = get.effect(target, card, target, target);
-			const att = get.sgnAttitude(this, target);
-			if (att < 0) {
-				if (eff == 0) {
-					eff -= 0.1;
-				}
-				if (target.canEquip(card)) {
-					eff--;
-				}
-			} else {
-				if (att > 0 && target.canEquip(card) && eff > 0) {
-					eff++;
+			var target_equip_cards = target.getEquips(get.equipNum(card));
+			for (let target_equip_card of target_equip_cards) {
+				if (target_equip_card) {
+					if (get.equipValue(target_equip_card) <= 0 && get.equipValue(card) <= 0) return 0;
+					if (get.equipValue(target_equip_card) > 0 && get.equipValue(card) <= 0) return -1 + get.equipValue(card);
 				}
 			}
-			return eff;
+			return get.effect(target, card, target, target);
 		}
 		if (card.name == "du") {
 			// 保留毒/使用毒会有收益
@@ -1610,6 +1603,9 @@ export class Player extends HTMLDivElement {
 		if (target.hasSkillTag("nogain")) {
 			return 0;
 		}
+		if (game.hasPlayer(function(current) {
+			return current.getEquip("shanrangzhaoshu") && get.attitude(target, current) < 0;
+		})) return 0;
 		return Math.max(1, get.value(card, this) - get.value(card, target));
 	}
 	/**
@@ -2120,7 +2116,7 @@ export class Player extends HTMLDivElement {
 					const equipNum = get.equipNum(card);
 					let equipped = false;
 					for (let j = 0; j < this.node.equips.childNodes.length; j++) {
-						if (get.equipNum(this.node.equips.childNodes[j]) >= equipNum) {
+						if (get.sort_equipNum(get.equipNum(this.node.equips.childNodes[j])) >= get.sort_equipNum(equipNum)) {
 							this.node.equips.insertBefore(card, this.node.equips.childNodes[j]);
 							equipped = true;
 							break;
@@ -2707,6 +2703,7 @@ export class Player extends HTMLDivElement {
 				}
 				this.classList.remove("unseen");
 				this.classList.remove("unseen_show");
+				if (window.decadeUI) this.$prefixMark?.classList.remove("unseen");
 				break;
 			case 1:
 				if (log !== false) {
@@ -2743,6 +2740,7 @@ export class Player extends HTMLDivElement {
 				this.classList.remove("unseen2");
 				this.classList.remove("unseen_show");
 				this.classList.remove("unseen2_show");
+				if (window.decadeUI) this.$prefixMark?.classList.remove("unseen");
 				break;
 		}
 		if (!this.isUnseen(2)) {
@@ -2761,6 +2759,7 @@ export class Player extends HTMLDivElement {
 					case 0:
 						player.classList.remove("unseen");
 						player.classList.remove("unseen_show");
+						if (window.decadeUI) player.$prefixMark?.classList.remove("unseen");
 						break;
 					case 1:
 						player.classList.remove("unseen2");
@@ -2771,6 +2770,7 @@ export class Player extends HTMLDivElement {
 						player.classList.remove("unseen2");
 						player.classList.remove("unseen_show");
 						player.classList.remove("unseen2_show");
+						if (window.decadeUI) player.$prefixMark?.classList.remove("unseen");
 						break;
 				}
 				if (!player.isUnseen(2)) {
@@ -4716,7 +4716,7 @@ export class Player extends HTMLDivElement {
 			}
 			this.node.count.innerHTML = numh;
 		}*/
-		this.node.count.innerHTML = numh.toString();
+		this.node.count.innerHTML = numh?.toString();
 		if (numh < 10) {
 			this.node.count.dataset.condition = "low";
 		} else if (numh < 100) {
@@ -7451,7 +7451,7 @@ export class Player extends HTMLDivElement {
 					if (
 						aimTargets.some(current2 => {
 							if (withatt) {
-								if (get.sgn(get.value(es[i], current)) != -att) {
+								if (get.sgn(get.equipValue(es[i])) != -att) {
 									return false;
 								}
 								var att2 = get.sgn(get.attitude(player, current2));
@@ -10560,6 +10560,7 @@ export class Player extends HTMLDivElement {
 					id: id,
 				};
 				player.marks[id].setBackground(target, "character");
+				if (window.decadeUI) player.marks[id].style.backgroundSize = "cover !important";
 				game.addVideo("changeMarkCharacter", player, {
 					id: id,
 					name: name,
@@ -11497,6 +11498,17 @@ export class Player extends HTMLDivElement {
 		if (this.storage[skill] === undefined || this.storage[skill] === false) {
 			this.storage[skill] = true;
 		}
+		_status.event.clearStepCache();
+		return this;
+	}
+	awakenQidingSkill(skill){
+		if (this.storage[skill]) {
+			return;
+		}
+		if (this.storage[skill] === undefined || this.storage[skill] === false) {
+			this.storage[skill] = true;
+		}
+		game.log(`契约已成，${get.translation(this)}将【${get.translation(skill)}】改为锁定技。`);
 		_status.event.clearStepCache();
 		return this;
 	}
@@ -15552,7 +15564,7 @@ export class Player extends HTMLDivElement {
 				const equipNum = get.equipNum(card);
 				let equipped = false;
 				for (let j = 0; j < player.node.equips.childNodes.length; j++) {
-					if (get.equipNum(player.node.equips.childNodes[j]) >= equipNum) {
+					if (get.sort_equipNum(get.equipNum(player.node.equips.childNodes[j])) >= get.sort_equipNum(equipNum)) {
 						player.node.equips.insertBefore(card, player.node.equips.childNodes[j]);
 						equipped = true;
 						break;
@@ -15588,7 +15600,7 @@ export class Player extends HTMLDivElement {
 						equipped = true;
 						break;
 					}
-					if (get.equipNum(node) >= equipNum) {
+					if (get.sort_equipNum(get.equipNum(node)) >= get.sort_equipNum(equipNum)) {
 						player.node.equips.insertBefore(card, node);
 						equipped = true;
 						break;
@@ -15753,7 +15765,7 @@ export class Player extends HTMLDivElement {
 		game.addVideo("addVirtualEquip", player, [get.vcardInfo(cardx), get.cardsInfo(cards)]);
 		player.vcardsMap?.equips.push(cardx);
 		player.vcardsMap?.equips.sort((a, b) => {
-			return get.equipNum(a) - get.equipNum(b);
+			return get.sort_equipNum(get.equipNum(a)) - get.sort_equipNum(get.equipNum(b));
 		});
 		player.$addVirtualEquip(card, cards);
 		player.addEquipTrigger(card);
@@ -15849,7 +15861,7 @@ export class Player extends HTMLDivElement {
 					equipNum = get.equipNum(cardx);
 				if (player.node.equips.childNodes.length) {
 					for (let i = 0; i < player.node.equips.childNodes.length; i++) {
-						if (get.equipNum(player.node.equips.childNodes[i]) >= equipNum) {
+						if (get.sort_equipNum(get.equipNum(player.node.equips.childNodes[i])) >= get.sort_equipNum(equipNum)) {
 							equipped = true;
 							player.node.equips.insertBefore(cardx, player.node.equips.childNodes[i]);
 							break;
@@ -15887,7 +15899,7 @@ export class Player extends HTMLDivElement {
 		var equipNum = get.equipNum(card);
 		var equipped = false;
 		for (var i = 0; i < player.node.equips.childNodes.length; i++) {
-			if (get.equipNum(player.node.equips.childNodes[i]) >= equipNum) {
+			if (get.sort_equipNum(get.equipNum(player.node.equips.childNodes[i])) >= get.sort_equipNum(equipNum)) {
 				player.node.equips.insertBefore(card, player.node.equips.childNodes[i]);
 				equipped = true;
 				break;
@@ -15963,40 +15975,42 @@ export class Player extends HTMLDivElement {
 			if (this.$gainmod) {
 				this.$gainmod(card);
 			} else {
-				var node;
-				if (get.itemtype(card) == "card") {
-					node = card.copy("thrown", false);
-				} else {
-					node = ui.create.div(".card.thrown");
-					node.moveTo = lib.element.Card.prototype.moveTo;
-					node.moveDelete = lib.element.Card.prototype.moveDelete;
-				}
-				if (cardsetion) {
-					var next = ui.create.div(".cardsetion", cardsetion, node);
-					next.style.setProperty("display", "block", "important");
-					if (node.node) {
-						if (node.node.cardsetion) {
-							node.node.cardsetion.remove();
-							delete node.node.cardsetion;
-						}
-						node.node.cardsetion = next;
+				if (!window.decadeUI) {
+					var node;
+					if (get.itemtype(card) == "card") {
+						node = card.copy("thrown", false);
+					} else {
+						node = ui.create.div(".card.thrown");
+						node.moveTo = lib.element.Card.prototype.moveTo;
+						node.moveDelete = lib.element.Card.prototype.moveDelete;
 					}
-				}
-				node.fixed = true;
-				node.style.left = "calc(50% - 52px " + (Math.random() - 0.5 < 0 ? "+" : "-") + " " + Math.random() * 100 + "px)";
-				node.style.top = "calc(50% - 52px " + (Math.random() - 0.5 < 0 ? "+" : "-") + " " + Math.random() * 100 + "px)";
-				node.style.transform = "scale(0)";
-				node.hide();
-				ui.arena.appendChild(node);
-				ui.refresh(node);
-				node.show();
-				node.style.transform = "";
+					if (cardsetion) {
+						var next = ui.create.div(".cardsetion", cardsetion, node);
+						next.style.setProperty("display", "block", "important");
+						if (node.node) {
+							if (node.node.cardsetion) {
+								node.node.cardsetion.remove();
+								delete node.node.cardsetion;
+							}
+							node.node.cardsetion = next;
+						}
+					}
+					node.fixed = true;
+					node.style.left = "calc(50% - 52px " + (Math.random() - 0.5 < 0 ? "+" : "-") + " " + Math.random() * 100 + "px)";
+					node.style.top = "calc(50% - 52px " + (Math.random() - 0.5 < 0 ? "+" : "-") + " " + Math.random() * 100 + "px)";
+					node.style.transform = "scale(0)";
+					node.hide();
+					ui.arena.appendChild(node);
+					ui.refresh(node);
+					node.show();
+					node.style.transform = "";
 
-				lib.listenEnd(node);
-				var player = this;
-				setTimeout(function () {
-					node.moveDelete(player);
-				}, 700);
+					lib.listenEnd(node);
+					var player = this;
+					setTimeout(function () {
+						node.moveDelete(player);
+					}, 700);
+				}
 			}
 		}
 	}
@@ -16449,6 +16463,33 @@ export class Player extends HTMLDivElement {
 		if (this.$dieAfter) {
 			this.$dieAfter();
 		}
+		if (window.decadeUI) {
+			this.stopDynamic();
+
+			if (decadeUI.config.playerDieEffect) {
+				if (!this.node.dieidentity) this.node.dieidentity = ui.create.div('died-identity', this);
+				this.node.dieidentity.classList.add('died-identity');
+
+				var that = this;
+				var image = new Image();
+				var identity = decadeUI.getPlayerIdentity(this);
+				var url = decadeUIPath + 'image/decoration/dead_' + identity + '.png';
+				image.onerror = function () {
+					that.node.dieidentity.innerHTML = decadeUI.getPlayerIdentity(that, that.identity, true) + '<br>阵亡';
+				};
+
+				that.node.dieidentity.innerHTML = '';
+				that.node.dieidentity.style.backgroundImage = 'url("' + url + '")';
+				image.src = url;
+				setTimeout(function () {
+					var rect = that.getBoundingClientRect();
+					decadeUI.animation.playSpine('effect_zhenwang', {
+						parent: that,
+						scale: 0.8,
+					});
+				}, 250);
+			}
+		}
 	}
 	$dieflip(type) {
 		var top0 = ui.window.offsetHeight / 2;
@@ -16523,6 +16564,7 @@ export class Player extends HTMLDivElement {
 				game.delay();
 			}
 		}
+		if (window.decadeUI) dui.delay(451);
 	}
 }
 

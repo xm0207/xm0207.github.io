@@ -1,7 +1,14 @@
 dist
+dist-types
 output
 node_modules
 package-lock.json
+.turbo
+README.md
+*.zip
+*.txt
+*.pdf
+*.bak
 
 # IDE
 .idea/
@@ -17,3 +24,4 @@ package-lock.json
 # Windows
 ehthumbs.db
 Thumbs.db
+desktop.ini

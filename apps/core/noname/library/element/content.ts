@@ -747,7 +747,15 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 				player.disabledSlots[slot_key] ??= 0;
 				player.disabledSlots[slot_key] += lose;
 
-				const discardingCards = player.getCards("e", card => get.subtypes(card).includes(slot) && !event.cards.includes(card));
+				const discardingCards = player.getCards("e", card => {
+					if (event.cards.includes(card)) {
+						return false;
+					}
+					if (slot == "equip3_4") {
+						return get.subtypes(card).some(subtype => subtype == "equip3" || subtype == "equip4");
+					}
+					return get.subtypes(card).includes(slot);
+				});
 				if (discardingCards.length < 0) {
 					continue;
 				}
@@ -1136,7 +1144,7 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 			event.swapped = true;
 			const loseEvent = player.lose(result.cards, "visible").set("type", "equip").set("getlx", false);
 			loseEvent.swapEquip = true;
-			if (get.info(event.card, true)?.loseThrow) {
+			if (get.info(event.card, true)?.loseThrow || true) {
 				player.$throw(result.cards, 1000);
 			}
 			await loseEvent;
@@ -3609,7 +3617,15 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 	},
 	async gameDraw(event, trigger, player) {
 		const { num, targets } = event;
+		let gameStart_Effect = function () {
+			game.broadcastAll( () => {
+				if (window.decadeUI) {
+					setTimeout(decadeUI.effect.gameStart, 51);
+				}
+			});
+		}
 		if (_status.brawl && _status.brawl.noGameDraw) {
+			gameStart_Effect();
 			return;
 		}
 
@@ -3655,6 +3671,9 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 					player.directgain(cards);
 				}
 			}
+			if (window.decadeUI) {
+				player.$draw(numx);
+			}
 
 			if (player.singleHp === true && get.mode() != "guozhan" && (lib.config.mode != "doudizhu" || _status.mode != "online")) {
 				const next = player.doubleDraw();
@@ -3673,6 +3692,7 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 		await Promise.all(waitings);
 
 		if (!targets.includes(game.me) || event.changeCard == "disabled" || _status.auto || !game.me.countCards("h")) {
+			gameStart_Effect();
 			return;
 		}
 
@@ -3754,6 +3774,7 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 			ui.confirm.close();
 		}
 		game.me._start_cards = game.me.getCards("h");
+		gameStart_Effect();
 	},
 	async phaseLoop(event, trigger, player) {
 		let num = 1;
@@ -5429,7 +5450,7 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 							if (event.prompt) {
 								event.dialog = ui.create.dialog(event.prompt);
 							}
-							if (event.prompt2) {
+							if (event.prompt2 && event.dialog) {
 								event.dialog.addText(event.prompt2);
 							}
 						}
@@ -6804,6 +6825,25 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 				targets.sort(lib.sort.seat);
 			}
 			game.log(player, "对", targets, "发起拼点");
+			if (window.decadeUI) {
+				if (event.parent.name == null || event.parent.name == 'trigger') {
+					event.compareName = event.name;
+				} else {
+					event.compareName = event.parent.name;
+				}
+				game.broadcastAll(function(player, target, eventName) {
+					if (window.decadeUI) {
+						var dialog = decadeUI.create.compareDialog();
+						dialog.caption = get.translation(eventName) + '拼点';
+						dialog.player = player;
+						dialog.target = target;
+						dialog.open();
+
+						decadeUI.delay(400);
+						ui.dialogs[eventName] = dialog;
+					}
+				}, player, targets[0], event.compareName);
+			}
 			event.filterCard ??= lib.filter.all;
 		},
 		async (event, trigger, player) => {
@@ -6886,7 +6926,16 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 		},
 		async (event, trigger, player) => {
 			game.log(player, "的拼点牌为", event.card1);
-			player.showCards(event.card1).set("triggeronly", true);
+			if (window.decadeUI) {
+				game.broadcastAll(function(eventName, playerCard) {
+					if (window.decadeUI) {
+						var dialog = ui.dialogs[eventName];
+						dialog.playerCard = playerCard.copy();
+					}
+				}, event.compareName, event.card1);
+			} else {
+				player.showCards(event.card1).set("triggeronly", true);
+			}
 		},
 		async (event, trigger, player) => {
 			const targets = event.targets;
@@ -6898,14 +6947,39 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 				event.num2 = event.getNum(event.card2);
 				game.log(event.target, "的拼点牌为", event.card2);
 				player.line(event.target);
-				player.$compare(event.card1, event.target, event.card2);
-				event.target.showCards(event.card2).set("triggeronly", true);
+				if (!window.decadeUI) {
+					player.$compare(event.card1, event.target, event.card2);
+					event.target.showCards(event.card2).set("triggeronly", true);
+				} else {
+					game.broadcastAll(function(eventName, player, target, playerCard, targetCard) {
+						if (window.decadeUI) {
+							var dialog = ui.dialogs[eventName];
+							dialog.show();
+							dialog.target = target;
+							dialog.targetCard = targetCard.copy();
+						}
+					}, event.compareName, player, event.target, event.card1, event.card2);
+					decadeUI.delay(400);
+				}
 			} else {
+				if (window.decadeUI) {
+					game.broadcastAll(function(eventName) {
+						if (window.decadeUI) {
+							var dialog = ui.dialogs[eventName];
+							dialog.close();
+							setTimeout(function(dialog) {
+								dialog.player.$throwordered2(dialog.playerCard, true);
+							}, 110, dialog);
+						}
+					}, event.compareName);
+				}
 				event.goto(12);
 			}
 		},
 		async (event, trigger, player) => {
-			await game.delay(0, lib.config.game_speed == "vvfast" ? 4000 : 1500);
+			if (!window.decadeUI) {
+				await game.delay(0, lib.config.game_speed == "vvfast" ? 4000 : 1500);
+			}
 			await event.trigger("compare");
 		},
 		async (event, trigger, player) => {
@@ -6917,12 +6991,15 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 			const target = event.target;
 			event.result.num1[event.iiwhile] = event.num1;
 			event.result.num2[event.iiwhile] = event.num2;
+			if (window.decadeUI) event.chooseToCompareMultiple_result = null;
 			if (event.forceWinner === player || (event.forceWinner !== target && event.num1 > event.num2)) {
+				if (window.decadeUI) event.chooseToCompareMultiple_result = true;
 				event.winner = player;
 				event.str = `${get.translation(player)}拼点成功`;
 				player.popup("胜");
 				target.popup("负");
 			} else {
+				if (window.decadeUI) event.chooseToCompareMultiple_result = false;
 				event.str = `${get.translation(player)}拼点失败`;
 				if (event.forceWinner !== target && event.num1 == event.num2) {
 					player.popup("平");
@@ -6935,22 +7012,41 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 			}
 		},
 		async (event, trigger, player) => {
-			game.broadcastAll(str => {
-				const dialog = ui.create.dialog(str);
-				dialog.classList.add("center");
-				setTimeout(() => dialog.close(), 1000);
-			}, event.str);
-			game.delay(2);
+			if (!window.decadeUI) {
+					game.broadcastAll(str => {
+					const dialog = ui.create.dialog(str);
+					dialog.classList.add("center");
+					setTimeout(() => dialog.close(), 1000);
+				}, event.str);
+				game.delay(2);
+			} else {
+				game.broadcastAll(function(str, eventName, result) {
+					if (window.decadeUI) {
+						var dialog = ui.dialogs[eventName];
+						dialog.$playerCard.dataset.result = result ? '赢' : '没赢';
+						setTimeout(function(dialog, eventName) {
+							dialog.hide();
+							dialog.$playerCard.dataset.result = '';
+							setTimeout(function(dialog) {
+								dialog.target.$throwordered2(dialog.targetCard, true);
+							}, 180, dialog);
+						}, 1400, dialog, eventName);
+					}
+				}, event.str, event.compareName, event.chooseToCompareMultiple_result);
+				decadeUI.delay(1800);
+			}
 		},
 		async (event, trigger, player) => {
 			if (event.callback) {
 				game.broadcastAll(
 					(card1, card2) => {
-						if (card1.clone) {
-							card1.clone.style.opacity = 0.5;
-						}
-						if (card2.clone) {
-							card2.clone.style.opacity = 0.5;
+						if (!window.decadeUI) {
+							if (card1.clone) {
+								card1.clone.style.opacity = 0.5;
+							}
+							if (card2.clone) {
+								card2.clone.style.opacity = 0.5;
+							}
 						}
 					},
 					event.card1,
@@ -6995,6 +7091,35 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 				return;
 			}
 			game.log(player, "对", event.compareWithCardPile ? "牌堆" : target, "发起", event.isDelay ? "延时" : "", "拼点");
+			if (window.decadeUI) {
+				if (event.parent.name == null || event.parent.name == 'trigger') {
+					event.compareName = event.name;
+				} else {
+					event.compareName = event.parent.name;
+				}
+				if (typeof event.compareName == "string") {
+					if (event.compareName.startsWith("pre_")) {
+						event.compareName = event.compareName.slice(4);
+					}
+					if (event.compareName.startsWith("player_when_")) {
+						event.compareName = "";
+					}
+				}
+				if (!event.isDelay) {
+					game.broadcastAll(function(player, target, eventName) {
+						if (window.decadeUI) {
+							var dialog = decadeUI.create.compareDialog();
+							dialog.caption = get.translation(eventName) + '拼点';
+							dialog.player = player;
+							dialog.target = typeof(target) == "string" ? player : target;
+							dialog.open();
+
+							decadeUI.delay(400);
+							ui.dialogs[eventName] = dialog;
+						}
+					}, player, target, event.compareName);
+				}
+			}
 			event.filterCard ??= lib.filter.all;
 		},
 		async (event, trigger, player) => {
@@ -7024,6 +7149,15 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 				lose_list.push([player, result[0].cards]);
 			}
 			event.card1 = lose_list[0][1][0];
+			if (window.decadeUI && !event.isDelay) {
+				game.broadcastAll(function(eventName) {
+					if (window.decadeUI) {
+						var dialog = ui.dialogs[eventName];
+						dialog.$playerCard.classList.add('infohidden');
+						dialog.$playerCard.classList.add('infoflip');
+					}
+				}, event.compareName);
+			}
 			if (event.list.includes(target)) {
 				const index = event.list.indexOf(target);
 				if (result[index].skill && lib.skill[result[index].skill]?.onCompare) {
@@ -7045,6 +7179,15 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 				card2 = lose_list[1][1][0];
 			}
 			event.card2 = card2;
+			if (window.decadeUI && !event.isDelay) {
+				game.broadcastAll(function(eventName) {
+					if (window.decadeUI) {
+						var dialog = ui.dialogs[eventName];
+						dialog.$targetCard.classList.add('infohidden');
+						dialog.$targetCard.classList.add('infoflip');
+					}
+				}, event.compareName);
+			}
 			event.lose_list = lose_list;
 		},
 		async (event, trigger, player) => {
@@ -7095,9 +7238,19 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 		},
 		async (event, trigger, player) => {
 			const target = event.target;
-			game.broadcastAll(() => ui.arena.classList.add("thrownhighlight"));
-			game.addVideo("thrownhighlight1");
-			player.$compare(event.card1, event.compareWithCardPile ? player : target, event.card2);
+			if (!window.decadeUI) {
+				game.broadcastAll(() => ui.arena.classList.add("thrownhighlight"));
+				game.addVideo("thrownhighlight1");
+				player.$compare(event.card1, event.compareWithCardPile ? player : target, event.card2);
+			} else {
+				game.broadcastAll(function(eventName, player, target, playerCard, targetCard) {
+					if (window.decadeUI) {
+						var dialog = ui.dialogs[eventName];
+						dialog.playerCard = playerCard.copy();
+						dialog.targetCard = targetCard.copy();
+					}
+				}, event.compareName, player, target, event.card1, event.card2);
+			}
 		},
 		async (event, trigger, player) => {
 			const target = event.target;
@@ -7164,12 +7317,30 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 			}
 		},
 		async (event, trigger, player) => {
-			game.broadcastAll(str => {
-				const dialog = ui.create.dialog(str);
-				dialog.classList.add("center");
-				setTimeout(() => dialog.close(), 1000);
-			}, event.str);
-			game.delay(2);
+			if (!window.decadeUI) {
+				game.broadcastAll(str => {
+					const dialog = ui.create.dialog(str);
+					dialog.classList.add("center");
+					setTimeout(() => dialog.close(), 1000);
+				}, event.str);
+				game.delay(2);
+			} else {
+				game.broadcastAll(function(str, eventName, result) {
+					if (window.decadeUI) {
+						var dialog = ui.dialogs[eventName];
+						dialog.$playerCard.dataset.result = result ? '赢' : '没赢';
+						setTimeout(function(dialog, eventName) {
+							dialog.close();
+							setTimeout(function(dialog) {
+								dialog.player.$throwordered2(dialog.playerCard, true);
+								dialog.target.$throwordered2(dialog.targetCard, true);
+							}, 180, dialog);
+							ui.dialogs[eventName] = undefined;
+						}, 1400, dialog, eventName);
+					}
+				}, event.str, event.compareName, event.result.bool);
+				decadeUI.delay(1800);
+			}
 		},
 		async (event, trigger, player) => {
 			const target = event.target;
@@ -7211,11 +7382,28 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 			await event.trigger("compareCardShowBefore");
 		},
 		async (event, trigger, player) => {
+			const evt = event.parentEvent;
 			const target = event.target;
-			game.broadcastAll(() => ui.arena.classList.add("thrownhighlight"));
-			ui.arena.classList.add("thrownhighlight");
-			game.addVideo("thrownhighlight1");
-			player.$compare(event.card1, target, event.card2);
+			if (!window.decadeUI) {
+				game.broadcastAll(() => ui.arena.classList.add("thrownhighlight"));
+				ui.arena.classList.add("thrownhighlight");
+				game.addVideo("thrownhighlight1");
+				player.$compare(event.card1, target, event.card2);
+			} else {
+				game.broadcastAll(function(eventName, player, target, playerCard, targetCard) {
+					if (window.decadeUI) {
+						var dialog = decadeUI.create.compareDialog();
+						dialog.caption = get.translation(eventName) + '拼点';
+						dialog.player = player;
+						dialog.target = target;
+						dialog.open();
+						decadeUI.delay(400);
+						ui.dialogs[eventName] = dialog;
+						dialog.playerCard = playerCard.copy();
+						dialog.targetCard = targetCard.copy();
+					}
+				}, evt.compareName, player, target, event.card1, event.card2);
+			}
 		},
 		async (event, trigger, player) => {
 			const target = event.target;
@@ -7268,12 +7456,31 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 			}
 		},
 		async (event, trigger, player) => {
-			game.broadcastAll(str => {
-				const dialog = ui.create.dialog(str);
-				dialog.classList.add("center");
-				setTimeout(() => dialog.close(), 1000);
-			}, event.str);
-			await game.delay(2);
+			const evt = event.parentEvent;
+			if (!window.decadeUI) {
+				game.broadcastAll(str => {
+					const dialog = ui.create.dialog(str);
+					dialog.classList.add("center");
+					setTimeout(() => dialog.close(), 1000);
+				}, event.str);
+				await game.delay(2);
+			} else {
+				game.broadcastAll(function(str, eventName, result) {
+					if (window.decadeUI) {
+						var dialog = ui.dialogs[eventName];
+						dialog.$playerCard.dataset.result = result ? '赢' : '没赢';
+						setTimeout(function(dialog, eventName) {
+							dialog.close();
+							setTimeout(function(dialog) {
+								dialog.player.$throwordered2(dialog.playerCard, true);
+								dialog.target.$throwordered2(dialog.targetCard, true);
+							}, 180, dialog);
+							ui.dialogs[eventName] = undefined;
+						}, 1400, dialog, eventName);
+					}
+				}, event.str, evt.compareName, event.result.bool);
+				decadeUI.delay(1800);
+			}
 		},
 		async (event, trigger, player) => {
 			const target = event.target;
@@ -7511,7 +7718,7 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 	],
 	async chooseCardOL(event, trigger, player) {
 		const targets: Player[] = event.list;
-
+		event.targets = targets.slice(0);
 		type ChooseCardOLResult = Partial<Result> | "ai";
 		const chooseRemote = (args, set) => {
 			game.me.chooseCard(...args).set(set);
@@ -9476,10 +9683,8 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 							if (get.effect(target, card, target, target) <= -5) {
 								noEffect = false;
 							}
-							return game.hasPlayer(current => {
-								if (!aimTargets.includes(current)) {
-									return false;
-								}
+							return ["lebu", "bingliang", "caomu", "hongshui", "huoshan", "suibozhuliu"].includes(card.name) && game.hasPlayer(function (current) {
+								if (!aimTargets.includes(current)) return false;
 								return current != target && current.canAddJudge(card) && get.attitude(player, current) < 0;
 							});
 						})
@@ -9492,8 +9697,8 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 								return false;
 							}
 							return (
-								get.value(card, target) < 0 &&
-								game.hasPlayer(current => {
+								get.equipValue(card) < 0 &&
+								game.hasPlayer(function (current) {
 									if (!aimTargets.includes(current)) {
 										return false;
 									}
@@ -9504,13 +9709,13 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 					) {
 						return 9;
 					}
-				} else if (att < 0) {
+				} else if (att <= 0) {
 					if (
 						game.hasPlayer(current => {
 							if (current != target && get.attitude(player, current) > 0) {
-								const es = target.getCards("e", filterCard);
-								for (const equipCard of es) {
-									if (get.value(equipCard, target) > 0 && current.canEquip(equipCard, _status.event.canReplace) && get.effect(current, equipCard, player, player) > (_status.event.canReplace ? get.effect(target, equipCard, player, player) : 0)) {
+								var es = target.getCards("e", filterCard);
+								for (var i = 0; i < es.length; i++) {
+									if (get.equipValue(es[i]) > 0 && current.canEquip(es[i], _status.event.canReplace) && get.effect(current, es[i], player, player) > (_status.event.canReplace ? get.effect(target, es[i], player, player) : 0)) {
 										return true;
 									}
 								}
@@ -9522,28 +9727,25 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 				}
 				return 0;
 			}
-			const current = ui.selected.targets[0];
-			const pos = get.event().nojudge ? "e" : "ej";
-			const cards = current.getCards(pos, filterCard);
-			const att2 = get.sgn(get.attitude(player, current));
-			let maxEff = 0;
-			for (const card of cards) {
-				if (att2 <= 0 && get.sgn(get.value(card, current)) < 0) {
-					continue;
-				}
-				const att3 = get.sgn(get.attitude(player, target));
-				let val = get.effect(target, card, player, target);
-				if (att3 != get.sgn(val)) {
-					continue;
-				}
-				if (att2 > 0 && get.position(card) == "e") {
-					val /= 2;
-				}
-				if (Math.abs(val) > maxEff) {
-					maxEff = Math.abs(val);
+			var sec_target = ui.selected.targets[0];
+			var sec_att1 = get.attitude(player, sec_target);
+			var sec_att2 = get.attitude(player, target);
+			if (sec_target != target) {
+				if (sec_att1 > 0 && sec_att2 < 0) {
+					if (!_status.event.nojudge && sec_target.countCards("j", function(card) {
+						if (!filterCard(card)) return false;
+						return ["lebu", "bingliang", "caomu", "hongshui", "huoshan", "suibozhuliu"].includes(card.name) && target.canAddJudge(card);
+					})) return 14;
+					if (sec_target.countCards("e", function(card) {
+						return get.equipValue(card) < 0 && target.canEquip(card);
+					}) > 0) return 9;
+				} else if (sec_att1 <= 0 && sec_att2 > 0) {
+					if (sec_target.countCards("e", function(card) {
+						return get.equipValue(card) > 0 && target.canEquip(card, _status.event.canReplace);
+					}) > 0) return 8;
 				}
 			}
-			return maxEff;
+			return 0;
 		});
 		next.set("multitarget", true);
 		next.set("targetprompt", _status.event.targetprompt || ["被移走", "移动目标"]);
@@ -9607,19 +9809,22 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 						const targets0 = _status.event.targets0;
 						const targets1 = _status.event.targets1;
 						if (get.attitude(player, targets0) > 0 && get.attitude(player, targets1) < 0) {
-							if (get.position(button.link) == "j") {
-								return 12;
+							if (get.position(button.link) == "j" && ["lebu", "bingliang", "caomu", "hongshui", "huoshan", "suibozhuliu"].includes(button.link.name)) {
+								return 12 + get.value(button.link);
 							}
-							if (get.value(button.link, targets0) < 0 && get.effect(targets1, button.link, player, targets1) > 0) {
+							if (get.equipValue(button.link) < 0) {
 								return 10;
 							}
-							return 0;
-						} else {
+							return -10;
+						} else if (get.attitude(player, targets0) <= 0 && get.attitude(player, targets1) > 0) {
 							if (get.position(button.link) == "j") {
 								return -10;
 							}
-							return get.value(button.link) * get.effect(targets1, button.link, player, targets1);
+							if (get.equipValue(button.link) > 0 && get.effect(targets1, button.link, player, targets1) > 0) {
+								return 10 + get.equipValue(button.link);
+							}
 						}
+						return 0
 					})
 					.set("target", targets[0])
 					.set("nojudge", event.nojudge || false)
@@ -9858,7 +10063,7 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 								if (str) {
 									node.querySelector(".info").innerHTML = str;
 								}
-								if (cards.length > 1 || !card.isCard || card.name != node.name || card.nature != node.nature || !card.cards.length) {
+								if (cards?.length > 1 || !card.isCard || card.name != node.name || card.nature != node.nature || !card?.cards?.length) {
 									ui.create.cardTempName(card, node);
 									if (node._tempName && card_cards?.length <= 0) {
 										node._tempName.innerHTML = node._tempName.innerHTML.slice(0, node._tempName.innerHTML.indexOf("<span", -1));
@@ -10026,100 +10231,88 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 		async (event, trigger, player) => {
 			const { cards, card, targets, num } = event;
 			event.sortTarget = (animate, sort) => {
-				const info = get.info(event.card, false);
-				if (num == 0 && targets.length > 1) {
-					if (!info.multitarget) {
-						if (!event.fixedSeat && !sort) {
-							targets.sortBySeat(_status.currentPhase || player);
-						}
-						if (animate) {
-							for (const target of targets) {
-								target.addTempClass("target");
-							}
-						}
-					} else if (animate) {
-						for (const target of targets) {
-							target.addTempClass("target");
-						}
-					}
+				const { card, targets, num, fixedSeat } = event;
+				const info = get.info(card, false);
+				if (num !== 0 || targets.length <= 1) {
+					return;
+				}
+				if (!info.multitarget && !fixedSeat && !sort) {
+					targets.sortBySeat(_status.currentPhase || player);
+				}
+				if (!animate) {
+					return;
+				}
+				for (const target of targets) {
+					target.addTempClass("target");
 				}
 			};
 			event.sortTarget();
-			event.getTriggerTarget = (list1, list2) => {
-				const listx = list1.slice(0).sortBySeat(_status.currentPhase || player);
-				for (const target of listx) {
-					if (get.numOf(list2, target) < get.numOf(listx, target)) {
-						return target;
-					}
+			event._triggerTo = async (name: string, key: string, first: string, last?: boolean) => {
+				const { cards, targets } = event;
+				if (event.all_excluded) {
+					return;
 				}
-				return null;
+				if (!event[key]) {
+					event[key] = [];
+				}
+				const triggeredTargets = event[key] as Player[];
+				const target = getTriggerTarget(event, triggeredTargets);
+				if (!target) {
+					return;
+				}
+				triggeredTargets.push(target);
+				const next = game.createEvent(name, false);
+				if (!event[first]) {
+					event[first] = true;
+					next.isFirstTarget = true;
+				}
+				next.setContent("emptyEvent");
+				next.targets = targets;
+				next.target = target;
+				next.card = event.card;
+				next.cards = cards;
+				next.player = player;
+				next.skill = event.skill;
+				next.excluded = event.excluded;
+				next.directHit = event.directHit;
+				next.customArgs = event.customArgs;
+				if (event.forceDie) {
+					next.forceDie = true;
+				}
+				if (last && event.targets.length === event[key].length) {
+					event.sortTarget();
+				}
+				await next;
+				event.redo();
+				return;
+
+				function getTriggerTarget(event: GameEvent, triggered: Player[]) {
+					const sortedTargets = [...event.targets];
+					const remainingTargets = new Map<Player, number>();
+					for (const target of sortedTargets) {
+						remainingTargets.set(target, (remainingTargets.get(target) || 0) + 1);
+					}
+					for (const target of triggered) {
+						const count = remainingTargets.get(target);
+						if (count) {
+							remainingTargets.set(target, count - 1);
+						}
+					}
+					sortedTargets.sortBySeat(_status.currentPhase || event.player);
+					for (const target of sortedTargets) {
+						if ((remainingTargets.get(target) || 0) > 0) {
+							return target;
+						}
+					}
+					return null;
+				}
 			};
 		},
 		async (event, trigger, player) => {
-			const { cards, card, targets, num } = event;
-			if (event.all_excluded) {
-				return;
-			}
-			if (!event.triggeredTargets1) {
-				event.triggeredTargets1 = [];
-			}
-			const target = event.getTriggerTarget(targets, event.triggeredTargets1);
-			if (target) {
-				event.triggeredTargets1.push(target);
-				const next = game.createEvent("useCardToPlayer", false);
-				if (!event.isFirstTarget1) {
-					event.isFirstTarget1 = true;
-					next.isFirstTarget = true;
-				}
-				next.setContent("emptyEvent");
-				next.targets = targets;
-				next.target = target;
-				next.card = event.card;
-				next.cards = cards;
-				next.player = player;
-				next.skill = event.skill;
-				next.excluded = event.excluded;
-				next.directHit = event.directHit;
-				next.customArgs = event.customArgs;
-				if (event.forceDie) {
-					next.forceDie = true;
-				}
-				await next;
-				event.redo();
-			}
+			await event._triggerTo("useCardToPlayer", "triggeredTargets1", "isFirstTarget1");
 		},
 		async (event, trigger, player) => {
-			const { cards, card, targets, num } = event;
-			if (event.all_excluded) {
-				return;
-			}
-			if (!event.triggeredTargets2) {
-				event.triggeredTargets2 = [];
-			}
-			const target = event.getTriggerTarget(targets, event.triggeredTargets2);
-			if (target) {
-				event.triggeredTargets2.push(target);
-				const next = game.createEvent("useCardToTarget", false);
-				if (!event.isFirstTarget2) {
-					event.isFirstTarget2 = true;
-					next.isFirstTarget = true;
-				}
-				next.setContent("emptyEvent");
-				next.targets = targets;
-				next.target = target;
-				next.card = event.card;
-				next.cards = cards;
-				next.player = player;
-				next.skill = event.skill;
-				next.excluded = event.excluded;
-				next.directHit = event.directHit;
-				next.customArgs = event.customArgs;
-				if (event.forceDie) {
-					next.forceDie = true;
-				}
-				await next;
-				event.redo();
-			}
+			await event._triggerTo("useCardToTarget", "triggeredTargets2", "isFirstTarget2");
 		},
 		async (event, trigger, player) => {
 			const { cards, card, targets, num } = event;
@@ -10136,73 +10329,10 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 			}
 		},
 		async (event, trigger, player) => {
-			const { cards, card, targets, num } = event;
-			if (event.all_excluded) {
-				return;
-			}
-			if (!event.triggeredTargets3) {
-				event.triggeredTargets3 = [];
-			}
-			const target = event.getTriggerTarget(targets, event.triggeredTargets3);
-			if (target) {
-				event.triggeredTargets3.push(target);
-				const next = game.createEvent("useCardToPlayered", false);
-				if (!event.isFirstTarget3) {
-					event.isFirstTarget3 = true;
-					next.isFirstTarget = true;
-				}
-				next.setContent("emptyEvent");
-				next.targets = targets;
-				next.target = target;
-				next.card = event.card;
-				next.cards = cards;
-				next.player = player;
-				next.skill = event.skill;
-				next.excluded = event.excluded;
-				next.directHit = event.directHit;
-				next.customArgs = event.customArgs;
-				if (event.forceDie) {
-					next.forceDie = true;
-				}
-				await next;
-				event.redo();
-			}
+			await event._triggerTo("useCardToPlayered", "triggeredTargets3", "isFirstTarget3");
 		},
 		async (event, trigger, player) => {
-			const { cards, card, targets, num } = event;
-			if (event.all_excluded) {
-				return;
-			}
-			if (!event.triggeredTargets4) {
-				event.triggeredTargets4 = [];
-			}
-			const target = event.getTriggerTarget(targets, event.triggeredTargets4);
-			if (target) {
-				event.triggeredTargets4.push(target);
-				const next = game.createEvent("useCardToTargeted", false);
-				if (!event.isFirstTarget4) {
-					event.isFirstTarget4 = true;
-					next.isFirstTarget = true;
-				}
-				next.setContent("emptyEvent");
-				next.targets = targets;
-				next.target = target;
-				next.card = event.card;
-				next.cards = cards;
-				next.player = player;
-				next.skill = event.skill;
-				next.excluded = event.excluded;
-				next.directHit = event.directHit;
-				next.customArgs = event.customArgs;
-				if (event.forceDie) {
-					next.forceDie = true;
-				}
-				if (targets.length == event.triggeredTargets4.length) {
-					event.sortTarget();
-				}
-				await next;
-				event.redo();
-			}
+			await event._triggerTo("useCardToTargeted", "triggeredTargets4", "isFirstTarget4", true);
 		},
 		async (event, trigger, player) => {
 			const { cards, card, targets, num, target } = event;
@@ -11273,6 +11403,10 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 			let sort;
 			const frag1 = document.createDocumentFragment();
 			const frag2 = document.createDocumentFragment();
+			if (window.decadeUI) {
+				var handcards = player.node.handcards1;
+				var fragment = document.createDocumentFragment();
+			}
 			const hs = player.getCards("hs");
 			for (let i = 0; i < cards.length; i++) {
 				if (hs.includes(cards[i])) {
@@ -11288,11 +11422,12 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 					card.addKnower("everyone");
 				}
 				card.fix();
-				card.style.transform = "";
+				if (!window.decadeUI) card.style.transform = "";
 				event.gaintag.forEach(tag => card.addGaintag(tag));
 				if (event.knowers) {
 					card.addKnower(event.knowers); //添加事件设定的知情者。
 				}
+				if (window.decadeUI) fragment.insertBefore(card, fragment.firstChild);
 				if (_status.discarded) {
 					_status.discarded.remove(card);
 				}
@@ -11302,13 +11437,15 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 						card.vanishtag.splice(num2--, 1);
 					}
 				}
-				if (player == game.me) {
-					card.classList.add("drawinghidden");
-				}
-				if (get.is.singleHandcard() || sort > 1) {
-					frag1.appendChild(card);
-				} else {
-					frag2.appendChild(card);
+				if (!window.decadeUI) {
+					if (player == game.me) {
+						card.classList.add("drawinghidden");
+					}
+					if (get.is.singleHandcard() || sort > 1) {
+						frag1.appendChild(card);
+					} else {
+						frag2.appendChild(card);
+					}
 				}
 			}
 			const addv = () => {
@@ -11338,6 +11475,33 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 				}
 				broadcast();
 			};
+			if (window.decadeUI) {
+				var gainTo = function (cards, nodelay) {
+					cards.duiMod = event.source;
+					if (player == game.me) {
+						dui.layoutHandDraws(cards.reverse());
+						dui.queueNextFrameTick(dui.layoutHand, dui);
+						game.addVideo('gain12', player, [get.cardsInfo(fragment.childNodes), event.gaintag]);
+					}
+
+					var s = player.getCards('s');
+					if (s.length)
+						handcards.insertBefore(fragment, s[0]);
+					else
+						handcards.appendChild(fragment);
+
+					broadcast();
+
+					if (nodelay !== true) {
+						setTimeout(function (player) {
+							player.update();
+							game.resume();
+						}, get.delayx(400, 400) + 66, player);
+					} else {
+						player.update();
+					}
+				};
+			}
 
 			let animateTime: number | Promise<void> | null = null;
 			const animate: GainAnimate | null = event.animate;
@@ -11386,12 +11550,20 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 					break;
 			}
 			if (animateTime == null) {
-				postAnimate();
+				if (window.decadeUI) {
+					gainTo(cards, true);
+				} else {
+					postAnimate();
+				}
 			} else {
 				const waiting = typeof animateTime === "number" ? delay(get.delayx(animateTime, animateTime)) : animateTime;
-				waiting.then(postAnimate).finally(() => void game.resume());
+				if (window.decadeUI) {
+					gainTo(cards);
+				} else {
+					waiting.then(postAnimate).finally(() => void game.resume());
+				}
 				await game.pause();
-				game.delayx();
+				if (!window.decadeUI) game.delayx();
 			}
 
 			if (event.updatePile) {
@@ -12194,12 +12366,25 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 			return;
 		}
 
+		game.broadcastAll(function(player) {
+			if (!window.decadeUI) return;
+			decadeUI.animation.playSpine("effect_loseHp", { scale: 0.6, parent: player });
+		}, player);
+
 		if (lib.config.background_audio) {
-			game.playAudio("effect", "loseHp");
+			if (window.decadeUI) {
+				game.playAudio('../extension', decadeUI.extensionName, 'audio/loseHp.mp3');
+			} else {
+				game.playAudio("effect", "loseHp");
+			}
 		}
 		game.broadcast(() => {
 			if (lib.config.background_audio) {
-				game.playAudio("effect", "loseHp");
+				if (window.decadeUI) {
+					game.playAudio('../extension', decadeUI.extensionName, 'audio/loseHp.mp3');
+				} else {
+					game.playAudio("effect", "loseHp");
+				}
 			}
 		});
 		game.log(player, `失去了${get.cnNumber(num)}点体力`);
@@ -12945,7 +13130,11 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 					if (game.chess) {
 						event.node = card.copy("thrown", "center", ui.arena).addTempClass("start");
 					} else {
-						event.node = player.$throwordered(card.copy(), true);
+						if (window.decadeUI) {
+							event.node = player.$throwordered2(card.copy(), true);
+						} else {
+							event.node = player.$throwordered(card.copy(), true);
+						}
 					}
 					if (lib.cardOL) {
 						lib.cardOL[cardid] = event.node;
@@ -13009,13 +13198,14 @@ export const Content: Record<string, ContentFuncByAll | ContentFuncsByAll> = {
 				if (dialog) {
 					dialog.close();
 				}
-				ui.arena.classList.remove("thrownhighlight");
+				if (!window.decadeUI) ui.arena.classList.remove("thrownhighlight");
 			}, event.videoId);
 			event.dialog.close();
 			game.addVideo("judge2", null, event.videoId);
 			ui.arena.classList.remove("thrownhighlight");
 			game.log(player, "的判定结果为", event.result.card);
 			const triggerFixing = event.trigger("judgeFixing");
+			if (window.decadeUI) event.triggerMessage('judgeresult');
 			let callback = null;
 			if (event.callback) {
 				const next = game.createEvent("judgeCallback", false);

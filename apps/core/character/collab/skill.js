@@ -1136,6 +1136,10 @@ const skills = {
 			}
 			return true;
 		},
+		check(event, player) {
+			const hs = player.getCards("h");
+			return hs.length < 3 && hs.every(card => !player.hasUseTarget(card));
+		},
 		async content(event, trigger, player) {
 			let card = get.cardPile(card => get.type(card) == "equip" && player.hasUseTarget(card));
 			await player.chooseUseTarget(card, true);
@@ -1350,7 +1354,17 @@ const skills = {
 		async content(event, trigger, player) {
 			const skill = event.name;
 			player.addMark(skill, 1, false);
-			player.when({ global: ["roundStart"] }).step(async () => player.clearMark("mbzhengpeng", false));
+			// 上游寫法: player.when({ global: ["roundStart"] }).then(() => player.clearMark("mbzhengpeng", false));
+			// 在編譯後後報錯, 因為編譯後的:
+			// player.clearMark("mbzhengpeng", false)
+			// 會被改成
+			// player2.clearMark("mbzhengpeng", false)
+			// 系統找不到player2因此報錯
+			// 以下已經修正
+			player.when({ global: ["roundStart"] })
+			.then(async (event, trigger, player) => {
+				player.clearMark("mbzhengpeng", false);
+			});
 			await player.loseHp(player.countMark(skill) - 1);
 			const num = get.info(skill).judge(event.targets[0]);
 			if (num > 0) {
@@ -3555,6 +3569,18 @@ const skills = {
 		derivation: "olchengxiang",
 		ai: {
 			halfneg: true,
+			effect: {
+				player(card, player, target, current) {
+					if (!player.hasSkill("olchengxiang") && get.tag(card, "draw")) {
+						return -1;
+					}
+				},
+				target(card, player, target, current) {
+					if (!target.hasSkill("olchengxiang") && get.tag(card, "draw")) {
+						return -1;
+					}
+				},
+			},
 		},
 	},
 	stronglianwu: {
@@ -5455,7 +5481,7 @@ const skills = {
 			order: 20,
 			result: {
 				player(player) {
-					return player.hasCard(card => card.hasGaintag("dcbeijin_effect"), "h") ? 0 : 1;
+					return (player.hp < 3 || player.hasCard(card => card.hasGaintag("dcbeijin_effect"), "h")) ? 0 : 1;
 				},
 			},
 		},
@@ -8275,7 +8301,7 @@ const skills = {
 		selectCard: 2,
 		complexCard: true,
 		prompt: "弃置两张颜色不同的牌并改变天气",
-		check: card => 4.5 - get.value(card),
+		check: card => 11 - get.value(card),
 		async content(event, trigger, player) {
 			const list = ["烈日", "雷电", "大浪", "暴雨", "大雾"].randomGets(2);
 			const result = await player
@@ -8800,7 +8826,7 @@ const skills = {
 		ai: {
 			effect: {
 				player_use(card, player, target) {
-					if (player !== target && get.type2(card) === "trick") {
+					if (player !== target && get.type2(card) === "trick" && !get.tag(card, "recover")) {
 						let tars = [target];
 						if (ui.selected.targets.length) {
 							tars.addArray(ui.selected.targets.filter(i => i !== player && i !== target));
@@ -8967,7 +8993,7 @@ const skills = {
 					if (!_status.currentPhase?.isIn()) {
 						return false;
 					}
-					return player.isTurnedOver() && player != _status.currentPhase && event.getg?.(player)?.length > 0;
+					return player.isTurnedOver() && _status.currentPhase && player != _status.currentPhase && event.getg?.(player)?.length > 0;
 				},
 				check(event, player) {
 					return get.attitude(player, _status.currentPhase) > 0;
@@ -8996,7 +9022,7 @@ const skills = {
 					if (!event.getl?.(player)?.cards2?.length) {
 						return false;
 					}
-					return player.isTurnedOver() && player != _status.currentPhase && _status.currentPhase.countCards("he") > 0;
+					return player.isTurnedOver() && _status.currentPhase && player != _status.currentPhase && _status.currentPhase.countCards("he") > 0;
 				},
 				check(event, player) {
 					const target = _status.currentPhase;

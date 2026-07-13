@@ -1,3 +1,4 @@
+import { lib, game, ui, get, ai, _status } from "noname";
 /** @type { importCharacterConfig['skill'] } */
 const skills = {
 	nsshuaiyan: {
@@ -442,7 +443,7 @@ const skills = {
 				source: trigger.player,
 				evt: trigger,
 			};
-			await trigger.target.useCard({ name: "youdishenru" });
+			await trigger.target.useCard({ name: "youdishenru", isCard: true }, trigger.target);
 		},
 	},
 	jinyan: {

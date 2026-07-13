@@ -1,4 +1,13 @@
-import html from "dedent";
+// 以下註釋掉, 不然網頁部屬不能import
+//import html from "dedent";
+// 改用同個庫中同結果寫法, 見
+// \noname\apps\core\noname\ui\create\menu\new.js
+// \noname\apps\core\noname\ui\create\menu\nonameConfig.js
+/**
+ * 使字符串有html的代码提示
+ */
+const html = (strings, ...values) => String.raw({ raw: strings }, ...values);
+
 import { lib, game, ui, get, ai, _status } from "noname";
 export const type = "mode";
 /**
@@ -104,9 +113,10 @@ export default () => {
 				clear();
 				ui.auto.show();
 				ui.arena.classList.remove("only_dialog");
+				if (window.decadeUI) game.reload();
 
 				async function tutorial() {
-					if (!lib.config.phonelayout) {
+					if (!lib.config.phonelayout && !window.decadeUI) {
 						clear();
 						ui.create.dialog("如果你在使用手机，可能会觉得按钮有点小" + "，将布局改成移动可以使按钮变大");
 						ui.dialog.add('<div class="text center">你可以在选项-外观-布局中更改此设置');
@@ -130,22 +140,57 @@ export default () => {
 						ui.dialog.add('<div class="text center">你可以在选项-通用-中更改手势设置');
 						await new Promise(resolve => ui.create.control("继续", resolve));
 					}
+					let Click_Left_Menu = function (html_text) {
+						let left_menu_button = document.querySelectorAll('.menu-content .menubutton');
+						for (let i = 0; i < left_menu_button.length; i++) {
+							if (left_menu_button[i].innerHTML == html_text) {
+								if (lib.config.touchscreen) {
+									var e1 = new Event('touchstart');
+									var e2 = new Event('touchend'); 
+									left_menu_button[i].dispatchEvent(e1);
+									left_menu_button[i].dispatchEvent(e2);
+								} else {
+									left_menu_button[i].click();
+								}
+							}
+						}
+					}
 
 					clear();
 					ui.window.classList.add("noclick_important");
 					ui.click.configMenu();
+					ui.click.menuTab("开始");
+					if (window.decadeUI) ui.arena.classList.remove("menupaused");
 					ui.control.classList.add("noclick_click_important");
 					ui.control.style.top = "calc(100% - 105px)";
 					await new Promise(resolve => ui.create.control("在菜单中，可以进行各项设置", resolve));
 					ui.click.menuTab("选项");
-					await new Promise(resolve => ui.controls[0].replace("如果你感到游戏较卡，可以开启流畅模式", resolve));
-					await new Promise(resolve => ui.controls[0].replace("在技能一栏中，可以设置自动发动或双将禁配的技能", resolve));
+					Click_Left_Menu("通用");
+					await new Promise(resolve => ui.controls[0].replace("如果你感到游戏较卡，在选项-通用-流畅模式中，可以开启流畅模式", resolve));
+					ui.click.menuTab("选项");
+					Click_Left_Menu("外观");
+					await new Promise(resolve => ui.controls[0].replace("在选项-外观-界面缩放中，可以设置介面大小", resolve));
+					ui.click.menuTab("选项");
+					Click_Left_Menu("技能");
+					await new Promise(resolve => ui.controls[0].replace("在选项-技能中，可以设置自动发动或双将禁配的技能", resolve));
 					ui.click.menuTab("武将");
-					await new Promise(resolve => ui.controls[0].replace("在武将或卡牌一栏中，单击武将/卡牌可以将其禁用", resolve));
+					await new Promise(resolve => ui.controls[0].replace("在武将中，单击武将可以将其禁用", resolve));
+					ui.click.menuTab("卡牌");
+					await new Promise(resolve => ui.controls[0].replace("在卡牌中，单击卡牌可以将其禁用", resolve));
 					ui.click.menuTab("其它");
-					await new Promise(resolve => ui.controls[0].replace("在其它的关于一栏中，可以检查更新和下载素材", resolve));
-					await new Promise(resolve => ui.controls[0].replace("在控制/命令一栏中，可以执行一些常见的操作/输入游戏命令", resolve));
-					await new Promise(resolve => ui.controls[0].replace("在录像一栏中，可以管理游戏录像", resolve));
+					Click_Left_Menu("命令");
+					await new Promise(resolve => ui.controls[0].replace("在其它-命令中可以输入游戏命令", resolve));
+					ui.click.menuTab("其它");
+					Click_Left_Menu("录像");
+					await new Promise(resolve => ui.controls[0].replace("在其它-录像管理录像", resolve));
+					if (game.download) {
+						ui.click.menuTab("其它");
+						Click_Left_Menu("更新");
+						await new Promise(resolve => ui.controls[0].replace("在其它-更新中，可以检查更新和下载素材", resolve));
+					}
+					ui.click.menuTab("其它");
+					Click_Left_Menu("帮助");
+					await new Promise(resolve => ui.controls[0].replace("在其它-帮助中，获取游戏相关说明及帮助", resolve));
 					ui.click.configMenu();
 					ui.window.classList.remove("noclick_important");
 					ui.control.classList.remove("noclick_click_important");
@@ -912,7 +957,7 @@ export default () => {
 					return;
 				}
 				if (!game.zhu) {
-					if (get.population("fan") == 0) {
+					if (get.population("fan") === 0) {
 						switch (me.identity) {
 							case "fan":
 								game.over(false);
@@ -921,7 +966,11 @@ export default () => {
 								game.over(true);
 								break;
 							case "commoner":
-								game.over(true);
+								if (me.classList.contains("dead")) {
+									game.over(false);
+								} else {
+									game.over(true);
+								}
 								break;
 							default:
 								game.over();
@@ -936,7 +985,11 @@ export default () => {
 								game.over(false);
 								break;
 							case "commoner":
-								game.over(true);
+								if (me.classList.contains("dead")) {
+									game.over(false);
+								} else {
+									game.over(true);
+								}
 								break;
 							default:
 								game.over();
@@ -971,7 +1024,11 @@ export default () => {
 						game.over(false);
 					}
 				} else if (me.identity == "commoner") {
-					game.over(true);
+					if (me.classList.contains("dead")) {
+						game.over(false);
+					} else {
+						game.over(true);
+					}
 				}
 			},
 			/**
@@ -3209,7 +3266,14 @@ export default () => {
 								game.showIdentity();
 							}
 							if (game.zhu && game.zhu.isAlive() && get.population("nei") === 1 && get.config("nei_fullscreenpop")) {
-								game.me.$fullscreenpop('<span style="font-family:xinwei"><span data-nature="fire">主公</span><span data-nature="soil"> vs </span><span data-nature="thunder">内奸</span></span>', null, null, false);
+								if (window.decadeUI) {
+									game.broadcastAll(function() {
+										if (!window.decadeUI) return;
+										decadeUI.animation.playSpine("neijian", { scale: 0.7 });
+									});
+								} else {
+									game.me.$fullscreenpop('<span style="font-family:xinwei"><span data-nature="fire">主公</span><span data-nature="soil"> vs </span><span data-nature="thunder">内奸</span></span>', null, null, false);
+								}
 							}
 						});
 					}
@@ -3337,7 +3401,8 @@ export default () => {
 						return;
 					}
 
-					const marknow = !_status.connectMode && this != game.me && get.config("auto_mark_identity") && this.ai.identity_mark != "finished";
+					const marknow = !_status.connectMode && this != game.me && get.config("auto_mark_identity") && this.ai.identity_auto_mark != "finished";
+
 					if (marknow && _status.clickingidentity && _status.clickingidentity[0] == this) {
 						for (const identityNode of _status.clickingidentity[1]) {
 							identityNode.delete();
@@ -3361,7 +3426,7 @@ export default () => {
 						for (const target of targets) {
 							const shown = Math.abs(target.ai.shown);
 							let coefficient = 1;
-							if (shown < 0.2 || target.identity == "nei") {
+							if (shown < 0.2 || target.identity == "nei" || target.identity == "commoner") {
 								coefficient = 0;
 							} else if (shown < 0.4) {
 								coefficient = 0.5;
@@ -3375,12 +3440,12 @@ export default () => {
 						if (!marknow) {
 							return;
 						}
-						if (effect > 0 && this.identity != "fan") {
+						if (effect > 0 && this.identity != "fan" && this.ai.identity_mark != "nei" && this.ai.identity_mark != "commoner") {
 							this.setIdentity("zhong");
-							this.ai.identity_mark = "finished";
+							this.ai.identity_auto_mark = "finished";
 						} else if (effect < 0 && this.identity == "fan") {
 							this.setIdentity("fan");
-							this.ai.identity_mark = "finished";
+							this.ai.identity_auto_mark = "finished";
 						}
 						return;
 					}
@@ -3388,12 +3453,18 @@ export default () => {
 						if (marknow) {
 							this.setIdentity(identity);
 						}
-						this.ai.identity_mark = identity || "finished";
+						this.ai.identity_mark = identity;
 					};
 					if (effect > 0) {
-						markIdentity(this.ai.identity_mark == "fan" ? undefined : "zhong");
+						markIdentity(this.ai.identity_mark == "fan" ? this.identity : "zhong");
+						if (this.ai.identity_mark == "nei" || this.ai.identity_mark == "commoner") {
+							this.ai.identity_auto_mark = "finished";
+						}
 					} else if (effect < 0 && get.population("fan") > 0) {
-						markIdentity(this.ai.identity_mark == "zhong" ? undefined : "fan");
+						markIdentity(this.ai.identity_mark == "zhong" ? this.identity : "fan");
+						if (this.ai.identity_mark == "nei" || this.ai.identity_mark == "commoner") {
+							this.ai.identity_auto_mark = "finished";
+						}
 					}
 				},
 				/**
@@ -4176,43 +4247,89 @@ export default () => {
 						return 10;
 					}
 				}
-				if (from !== to && to.identity === "nei" && to.ai.shown < 1 && (to.ai.identity_mark === "fan" || to.ai.identity_mark === "zhong")) {
+				if (from !== to && (to.identity === "nei" || to.identity === "commoner") && to.ai.shown < 1 && (to.ai.identity_mark === "fan" || to.ai.identity_mark === "zhong")) {
 					identity2 = to.ai.identity_mark;
 				}
 				if (from.identity !== "nei" && from.identity !== "commoner" && from !== to && get.population("fan") === 0 && identity2 === "zhong") {
 					for (const current of game.players) {
-						if (current.identity === "nei" && current.ai.identity_mark === "zhong" && current.ai.shown < 1) {
+						if (current.identity === "nei" && current.ai.identity_mark === "zhong" && current.ai.shown < 0.95) {
 							identity2 = "nei";
 							break;
-						} else if (current.identity === "commoner" && current.ai.identity_mark === "zhong" && current.ai.shown < 1) {
+						} else if (current.identity === "commoner" && current.ai.identity_mark === "zhong" && current.ai.shown < 0.95) {
 							identity2 = "commoner";
 							break;
 						}
 					}
 				}
 				const zhongmode = !game.zhu.isZhu;
+				let max_hp_exclude_zhu_and_self = 0;
+				let nei_mark_zhong_or_none = false;
+				for (let i = 0; i < game.players.length; i++) {
+					if (game.players[i] !== from && game.players[i].identity !== "zhu") {
+						max_hp_exclude_zhu_and_self = Math.max(max_hp_exclude_zhu_and_self, game.players[i].hp);
+					}
+					if ((game.players[i].identity === "nei") && (game.players[i].ai.identity_mark === "zhong" || game.players[i].ai.identity_mark === undefined) && game.players[i].ai.shown < 1) {
+						nei_mark_zhong_or_none = true;
+					}
+				}
+				let no_fan_find_nei_target_effect = to.hp === max_hp_exclude_zhu_and_self ? - (to.countCards("h") + to.countCards("e") * 1.5 + to.hp * 2 + to.hujia * 2) : 0;
+				if (get.population("fan") === 0 && get.population("nei") > 0) {
+					for (let i = 0; i < game.players.length; i++) {
+						if (game.players[i].identity !== "zhu" && game.players[i].ai.identity_mark === undefined) {
+							game.players[i].ai.identity_mark = "zhong";
+						}
+					}
+				}
 				switch (identity) {
-					case "zhu": {
+					case "zhu":
 						switch (identity2) {
 							case "zhu":
 								return 10;
 							case "zhong":
+								if (get.population("fan") === 0 && get.population("nei") > 0 && nei_mark_zhong_or_none) {
+									if (get.population("zhong") + get.population("mingzhong") === 0) {
+										return -3;
+									}
+									if (to.hp >= 3 && !from.hasSkill("yimie")) {
+										return no_fan_find_nei_target_effect;
+									}
+									if (to.ai.identity_mark === "zhong" && to.ai.shown < 0.95) {
+										return 0;
+									}
+									return 0;
+								}
+								if (get.population("zhong") + get.population("mingzhong") === 0 && get.population("fan") === 1) {
+									return -0.5;
+								}
+								return 6;
 							case "mingzhong":
 								return 6;
-							case "nei": {
+							case "nei":
 								if (game.players.length === 2) {
 									return -10;
 								}
 								if (to.identity === "zhong") {
 									return 0;
 								}
-								if (get.population("fan") === 0) {
-									if (to.ai.identity_mark === "zhong" && to.ai.shown < 1) {
+								if (to.identity === "zhong" && get.population("fan") > 0) {
+									return 0;
+								}
+								if (get.population("fan") === 0 && get.population("nei") > 0) {
+									if (get.population("zhong") + get.population("mingzhong") === 0) {
+										return -3;
+									}
+									if (nei_mark_zhong_or_none) {
+										if (to.hp >= 3 && !from.hasSkill("yimie")) {
+											return no_fan_find_nei_target_effect;
+										}
+										if (to.ai.identity_mark === "zhong" && to.ai.shown < 0.95) {
+											return 0;
+										}
 										return 0;
 									}
-									return -0.5;
+									return -10;
 								}
-								if (zhongmode && to.ai.sizhong && to.ai.shown < 1) {
+								if (zhongmode && to.ai.sizhong && to.ai.shown < 0.95) {
 									return 6;
 								}
 								if (get.population("fan") === 1 && get.population("nei") === 1 && game.players.length === 3) {
@@ -4226,8 +4343,7 @@ export default () => {
 									return 0;
 								}
 								return Math.min(3, get.population("fan"));
-							}
-							case "fan": {
+							case "fan":
 								if (get.population("fan") === 1 && get.population("nei") === 1 && game.players.length === 3) {
 									const nei = game.players.find(current => current.identity === "nei");
 									if (nei && nei.hp > 1 && nei.hp > to.hp && nei.countCards("he") > to.countCards("he")) {
@@ -4236,18 +4352,23 @@ export default () => {
 									return -3;
 								}
 								return -4;
-							}
-							case "commoner": {
+							case "commoner":
 								if (to.identity === "zhong") {
 									return 0;
 								}
-								if (get.population("fan") === 0) {
-									if (to.ai.identity_mark === "zhong" && to.ai.shown < 1) {
+								if (get.population("fan") === 0 && get.population("nei") > 0 && nei_mark_zhong_or_none) {
+									if (get.population("zhong") + get.population("mingzhong") === 0) {
+										return -1;
+									}
+									if (to.hp >= 3 && !from.hasSkill("yimie")) {
+										return no_fan_find_nei_target_effect;
+									}
+									if (to.ai.identity_mark === "zhong" && to.ai.shown < 0.95) {
 										return 0;
 									}
-									return -0.5;
+									return 0;
 								}
-								if (zhongmode && to.ai.sizhong && to.ai.shown < 1) {
+								if (zhongmode && to.ai.sizhong && to.ai.shown < 0.95) {
 									return 6;
 								}
 								if (game.players.length === 3) {
@@ -4260,34 +4381,57 @@ export default () => {
 								if (situation < 0 && game.zhu && game.zhu.hp <= 2) {
 									return -3.8;
 								}
-								return Math.max(-4, 2 - get.population("fan"));
-							}
+								if (situation > 1) {
+									return 0;
+								}
+								return Math.min(0, Math.max(-3, situation));
 						}
 						break;
-					}
 					case "zhong":
 					case "mingzhong":
 						switch (identity2) {
 							case "zhu":
 								return 10;
 							case "zhong":
+								if (get.population("fan") === 0 && get.population("nei") > 0 && from !== to && nei_mark_zhong_or_none) {
+									return no_fan_find_nei_target_effect;
+								}
+								if (zhongmode && to.ai.sizhong && to.ai.shown < 0.95) {
+									return 6;
+								}
+								return 4;
 							case "mingzhong":
 								return 4;
 							case "nei":
-								if (get.population("fan") === 0) {
-									return -2;
+								if (get.population("fan") === 0 && get.population("nei") > 0) {
+									if (nei_mark_zhong_or_none) {
+										return no_fan_find_nei_target_effect;
+									}
+									return -10;
 								}
-								if (zhongmode && to.ai.sizhong && to.ai.shown < 1) {
+								if (zhongmode && to.ai.sizhong && to.ai.shown < 0.95) {
 									return 6;
+								}
+								if (situation > 1) {
+									return 0;
 								}
 								return Math.min(3, -situation);
 							case "fan":
 								return -8;
 							case "commoner":
-								return Math.min(3, Math.max(-3, situation - 0.2));
+								if (get.population("fan") === 0 && get.population("nei") > 0 && nei_mark_zhong_or_none) {
+									return no_fan_find_nei_target_effect;
+								}
+								if (zhongmode && to.ai.sizhong && to.ai.shown < 0.95) {
+									return 6;
+								}
+								if (situation > 1) {
+									return 0;
+								}
+								return Math.min(0, Math.max(-3, situation));
 						}
 						break;
-					case "nei": {
+					case "nei":
 						if (identity2 === "zhu" && game.players.length === 2) {
 							return -10;
 						}
@@ -4310,17 +4454,23 @@ export default () => {
 								if (strategy === 5) {
 									return 10;
 								}
-								if (to.hp <= 0) {
+								if (to.hp <= 0 && get.population("fan") + get.population("zhong") + get.population("mingzhong") > 0) {
 									return 10;
 								}
-								if (get.population("fan") === 1) {
+								if (get.population("fan") + get.population("zhong") + get.population("mingzhong") === 0) {
+									return -3;
+								}
+								if (situation > 0) {
+									return 0;
+								}
+								if (get.population("fan") === 1 && get.population("nei") === 1 && game.players.length === 3) {
 									const fan = game.players.find(current => current.identity === "fan");
 									if (fan && to.hp > 1 && to.hp > fan.hp && to.countCards("he") > fan.countCards("he")) {
-										return -1.7;
+										return -3;
 									}
 									return 0;
 								}
-								if (situation > 1 || get.population("fan") === 0) {
+								if (situation > 1 || (get.population("fan") + get.population("commoner") === 0)) {
 									num = 0;
 								} else {
 									num = get.population("fan") + Math.max(0, 3 - game.zhu.hp);
@@ -4424,15 +4574,17 @@ export default () => {
 								if (strategy === 3) {
 									num--;
 								}
+								if (game.zhu.hp >= 3 && situation > 1) {
+									num = 6;
+								}
 								return num;
 							case "commoner":
-								if (game.players.length <= 4) {
-									return 5;
+								if (get.population("fan") + get.population("zhong") + get.population("mingzhong") === 0 && game.zhu.hp <= 2 && situation <= 0) {
+									return -1;
 								}
-								return Math.min(Math.max(-situation, -2), 2);
+								return -6;
 						}
 						break;
-					}
 					case "fan":
 						switch (identity2) {
 							case "zhu":
@@ -4453,11 +4605,11 @@ export default () => {
 							case "mingzhong":
 								return -5;
 							case "nei":
-								if (zhongmode && to.ai.sizhong) {
+								if (zhongmode && to.ai.sizhong && to.ai.shown < 0.95) {
 									return -7;
 								}
-								if (get.population("fan") === 1) {
-									return 0;
+								if (get.population("fan") === 1 && get.population("nei") === 1 && game.players.length === 3) {
+									return -4;
 								}
 								if (get.population("zhong") + get.population("mingzhong") === 0) {
 									return -7;
@@ -4465,32 +4617,56 @@ export default () => {
 								if (game.zhu && game.zhu.hp <= 2) {
 									return -1;
 								}
+								if (situation < -1) {
+									return 0;
+								}
 								return Math.min(3, situation);
 							case "fan":
+								if (from !== to && get.population("fan") === 1 && get.population("nei") === 1 && game.players.length === 3) {
+									return -4;
+								}
 								return 5;
 							case "commoner":
-								return 2 * get.population("fan") - 3;
+								if (zhongmode && to.ai.sizhong && to.ai.shown < 0.95) {
+									return -6;
+								}
+								if (situation < -1) {
+									return 0;
+								}
+								return Math.min(0, Math.max(-3, -situation));
 						}
 						break;
 					case "commoner":
 						switch (identity2) {
 							case "zhu":
-								if (situation > 0) {
-									return 2 * Math.min(4, to.hp + to.countCards("h") / 4 - 2);
-								}
-								if (situation >= -3 && game.zhu) {
-									return to.hp - 2 + to.countCards("h") / 4;
-								} //return Math.min(-0.1,5-game.zhu.hp);
-								return to.hp + to.countCards("h") / 3 - 4;
-							case "zhong":
-								if (situation > 0) {
-									if (to.hp >= 2) {
-										return Math.min(3, Math.max(1, to.hp + to.countCards("h") / 4 - 4));
+								if (get.population("fan") === 0 && get.population("nei") > 0 && nei_mark_zhong_or_none) {
+									if (get.population("zhong") + get.population("mingzhong") === 0) {
+										return -3;
 									}
 									return 0;
 								}
-								return -2;
+								return situation;
+							case "zhong":
+							case "mingzhong":
+								if (get.population("fan") === 0 && get.population("nei") > 0 && nei_mark_zhong_or_none) {
+									if (get.population("zhong") + get.population("mingzhong") === 0) {
+										return -3;
+									}
+									return no_fan_find_nei_target_effect;
+								}
+								return situation;
 							case "nei":
+								if (get.population("fan") === 0 && get.population("nei") > 0) {
+									if (nei_mark_zhong_or_none) {
+										if (get.population("zhong") + get.population("mingzhong") === 0) {
+											return -3;
+										}
+										return no_fan_find_nei_target_effect;
+									}
+									if (get.population("zhong") + get.population("mingzhong") > 0) {
+										return -10;
+									}
+								}
 								if (game.players.length === 3 && get.population("nei") === 1) {
 									return Math.min(3.5, to.hp - 1.5 + to.countCards("h") / 3) - (to.hp < (game.zhu ? game.zhu.hp : 0) ? 4 : 0);
 								}
@@ -4500,16 +4676,16 @@ export default () => {
 								if (situation > 0) {
 									return -3;
 								}
-								return 0;
+								return -6;
 							case "fan":
-								if (situation < 0) {
-									return to.hp + to.countCards("h") / 4 - 1.7 * get.population("fan") + 2;
-								}
-								if (situation === 0) {
-									return 0;
-								}
-								return 0.55 * get.population("fan") - 2.1;
+								return -situation;
 							case "commoner":
+								if (get.population("fan") === 0 && get.population("nei") > 0 && from !== to && nei_mark_zhong_or_none) {
+									if (get.population("zhong") + get.population("mingzhong") === 0) {
+										return -3;
+									}
+									return no_fan_find_nei_target_effect;
+								}
 								return from === to ? 10 : to.hp <= 2 ? -2 : 0;
 						}
 						break;
@@ -4528,12 +4704,22 @@ export default () => {
 				let fan = 0;
 				for (const player of game.players) {
 					let php = player.hp;
+					let active_skills = player.getStockSkills(false);
+					let skill_score = 0;
+					if (active_skills.length > 0) {
+						skill_score = get.rank(player, true);
+					}
 					if (player.hasSkill("benghuai") && php > 4) {
 						php = 4;
 					} else if (php > 6) {
 						php = 6;
+					} else if (player.hasSkill("tairan")) {
+						php -= player.storage.tairan2;
 					}
-					const score = player.countCards("h") + player.countCards("e") * 1.5 + php * 2;
+					let score = player.countCards("h") + player.countCards("e") * 1.5 + php * 2 + player.hujia * 2;
+					if (skill_score != 0) {
+						score += skill_score;
+					}
 					if (player.identity === "zhu") {
 						zhuzhong += score * 1.2 + 5;
 						total += score * 1.2 + 5;
@@ -4545,6 +4731,16 @@ export default () => {
 						zhuzhong -= score + 4;
 						total += score + 4;
 						fan += score + 4;
+					} else if (player.identity === "commoner") {
+						let commoner_situation = (1 + get.population("zhong") + get.population("mingzhong")) - get.population("fan");
+						if (commoner_situation >= 0) {
+							zhuzhong += score * 0.8 + 3;
+							total += score * 0.8 + 3;
+						} else if (commoner_situation < 0) {
+							zhuzhong -= score + 4;
+							total += score + 4;
+							fan += score + 4;
+						}
 					}
 				}
 				if (absolute) {

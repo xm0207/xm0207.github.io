@@ -363,7 +363,7 @@ const skills = {
 				const bool = await player.chooseBool(get.prompt(event.skill, target), "将手牌数摸至与该角色相同").set("frequentSkill", event.skill);
 				if (bool) {
 					event.result = {
-						bool,
+						bool: bool,
 						targets: [target],
 						cost_data: "drawToOthers",
 					};

@@ -200,7 +200,7 @@ export class GetGuozhan extends Get {
 		if (fid == toidentity && toidentity != "ye") {
 			return 4 + difficulty;
 		}
-		if (from.identity == "unknown" && fid == toidentity) {
+		if (from.identity == "unknown" && fid == toidentity && toidentity != "ye") {
 			if (from.wontYe()) {
 				return 4 + difficulty;
 			}
@@ -309,12 +309,26 @@ export class GetGuozhan extends Get {
 		if (from.isFriendOf(to)) {
 			return 5 + difficulty;
 		}
-		if (from.identity == "unknown" && fid == to.identity) {
+		if (from.identity == "unknown" && fid == to.identity && to.identity != "ye") {
 			if (from.wontYe()) {
 				return 4 + difficulty;
 			}
 		}
+
 		var att = get.realAttitude(from, to, difficulty, tid);
+		const boss_skills = ["gz_gongao"];
+		let boss_skills_enemy = game.countPlayer(function (current) {
+			return boss_skills.some(skill => current.hasSkill(skill) && !current.isFriendOf(from) && from !== current);
+		}, true);
+		if (boss_skills_enemy > 0) {
+			if (to.hasSkill("gz_gongao")) {
+				return -10;
+			}
+			if (att > 0) {
+				return att;
+			}
+			return 0;
+		}
 		if (from.storage.zhibi && from.storage.zhibi.includes(to)) {
 			return att;
 		}

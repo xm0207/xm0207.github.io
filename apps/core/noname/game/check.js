@@ -81,6 +81,14 @@ export class Check {
 				item.classList.add("selectable");
 			}
 
+			if (window.decadeUI) {
+				if (item.classList.contains("selected") || item.classList.contains("selectable")) {
+					item.classList.remove("un-selectable");
+				} else {
+					item.classList.add("un-selectable");
+				}
+			}
+
 			game.callHook(`check${uppercaseType(type)}`, [item, event]);
 		});
 

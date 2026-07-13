@@ -228,6 +228,7 @@ export class Get {
 			th_skill = false,
 			evt1 = get.event(),
 			evt2 = get.event().getParent();
+		if (!name1 || !name2) return;
 		if ((["lose", "loseAsync"].includes(name) && !lib.skill[name2] && _status.event.getParent(2).name != "die") || (name == "gain" && !info[get.event().getParent().name])) {
 			name1 = _status.event.getParent(2).name;
 			evt1 = _status.event.getParent(2);
@@ -834,6 +835,9 @@ export class Get {
 		}
 		if (info.feedPigSkill) {
 			list.add("威主技");
+		}
+		if (get.is.qidingSkill(skill, player)) {
+			list.add("契定技");
 		}
 		if (info.categories) {
 			list.addArray(info.categories(skill, player));
@@ -3245,6 +3249,13 @@ else if (entry[1] !== void 0) stringifying[key] = JSON.stringify(entry[1]);*/
 		return 0;
 	}
 	/**
+	 * 裝備欄排序用函數
+	 */
+	sort_equipNum(old_equip_num) {
+		if (old_equip_num == 5) return -1;
+		return old_equip_num;
+	}
+	/**
 	 * 返回对象的实际类型
 	 * @overload
 	 * @param { Array } obj
@@ -4970,6 +4981,12 @@ else if (entry[1] !== void 0) stringifying[key] = JSON.stringify(entry[1]);*/
 				}
 				return "未发动";
 			}
+			case "qidingSkill": {
+				if (content) {
+					return "此事已成";
+				}
+				return "契约未定";
+			}
 			case "info": {
 				return lib.translate[skill + "_info"];
 			}
@@ -5066,54 +5083,56 @@ else if (entry[1] !== void 0) stringifying[key] = JSON.stringify(entry[1]);*/
 			if (!srcBase) {
 				return;
 			}
-			game.getFileList(
-				srcBase,
-				(folders, files) => {
-					if (!files.length) {
-						return;
-					}
-					if (!created) {
-						created = true;
-						uiintro.add('<div class="text center">更改皮肤</div>');
-					}
-					const avatars = ui.create.div(".buttons.smallzoom.scrollbuttons");
-					lib.setMousewheel(avatars);
-					uiintro.add(avatars);
-					const originButton = ui.create.div(".button.character.pointerdiv", avatars, function () {
-						delete lib.config.skin[nameskin];
-						if (lib.characterSubstitute[nameskin]) {
-							for (const list of lib.characterSubstitute[nameskin]) delete lib.config.skin[list[0]];
+			if (location.href.indexOf("//localhost") != -1) {
+				game.getFileList(
+					srcBase,
+					(folders, files) => {
+						if (!files.length) {
+							return;
 						}
-						avatarSetter("origin");
-						game.saveConfig("skin", lib.config.skin);
-					});
-					originButton.setBackground(nameskin, "character", "noskin");
-					const originSkin = ui.create.caption(`<div class="text" data-nature=shenmm style="font-size: 12px">经典形象</div>`, originButton);
-					originSkin.style.left = "1px";
-					originSkin.style.bottom = "-1px";
-					files.forEach(file => {
-						const src = `${srcBase}${file}`,
-							skinname = file;
-						const button = ui.create.div(".button.character.pointerdiv", avatars, function () {
-							lib.config.skin[nameskin] = [skinname, src];
+						if (!created) {
+							created = true;
+							uiintro.add('<div class="text center">更改皮肤</div>');
+						}
+						const avatars = ui.create.div(".buttons.smallzoom.scrollbuttons");
+						lib.setMousewheel(avatars);
+						uiintro.add(avatars);
+						const originButton = ui.create.div(".button.character.pointerdiv", avatars, function () {
+							delete lib.config.skin[nameskin];
 							if (lib.characterSubstitute[nameskin]) {
-								for (const list of lib.characterSubstitute[nameskin]) {
-									const sub = list[0],
-										[fold, prefix] = skinname.split(".");
-									lib.config.skin[sub] = [skinname, `${srcBase}${fold}/${sub}.${prefix}`];
-								}
+								for (const list of lib.characterSubstitute[nameskin]) delete lib.config.skin[list[0]];
 							}
-							avatarSetter(src);
+							avatarSetter("origin");
 							game.saveConfig("skin", lib.config.skin);
 						});
-						button.setBackgroundImage(src);
-						const skinCaption = ui.create.caption(`<div class="text" data-nature=shenmm style="font-size: 12px">${get.translation(skinname.slice(0, -4))}</div>`, button);
-						skinCaption.style.left = "1px";
-						skinCaption.style.bottom = "-1px";
-					});
-				},
-				() => {}
-			);
+						originButton.setBackground(nameskin, "character", "noskin");
+						const originSkin = ui.create.caption(`<div class="text" data-nature=shenmm style="font-size: 12px">经典形象</div>`, originButton);
+						originSkin.style.left = "1px";
+						originSkin.style.bottom = "-1px";
+						files.forEach(file => {
+							const src = `${srcBase}${file}`,
+								skinname = file;
+							const button = ui.create.div(".button.character.pointerdiv", avatars, function () {
+								lib.config.skin[nameskin] = [skinname, src];
+								if (lib.characterSubstitute[nameskin]) {
+									for (const list of lib.characterSubstitute[nameskin]) {
+										const sub = list[0],
+											[fold, prefix] = skinname.split(".");
+										lib.config.skin[sub] = [skinname, `${srcBase}${fold}/${sub}.${prefix}`];
+									}
+								}
+								avatarSetter(src);
+								game.saveConfig("skin", lib.config.skin);
+							});
+							button.setBackgroundImage(src);
+							const skinCaption = ui.create.caption(`<div class="text" data-nature=shenmm style="font-size: 12px">${get.translation(skinname.slice(0, -4))}</div>`, button);
+							skinCaption.style.left = "1px";
+							skinCaption.style.bottom = "-1px";
+						});
+					},
+					() => {}
+				);
+			}
 		};
 		if (typeof node._customintro == "function") {
 			if (node._customintro(uiintro, evt) === false) {

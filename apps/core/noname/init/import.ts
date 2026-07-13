@@ -59,6 +59,12 @@ export async function importMode(name: string) {
 }
 
 async function importFunction(type: "card" | "character" | "extension" | "mode", path: string): Promise<void> {
+	if (location.href.indexOf(".github.io") != -1) {
+		path = "/" + (import.meta.env.REPO_NAME || "noname") + path;
+	} else if (location.href.indexOf(".pages.dev") != -1) {
+		let origin = location.origin
+		path = new URL(path, origin).href;
+	}
 	const modeContent = await import(/* @vite-ignore */ path + ".js").catch(async e => {
 		if (window.isSecureContext) {
 			try {

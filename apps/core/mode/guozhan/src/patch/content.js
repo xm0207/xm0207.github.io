@@ -788,6 +788,10 @@ export const chooseCharacterOLContent = async (event, _trigger, _player) => {
 				let perfectPairs = [];
 				for (const btn of ui.dialog.buttons) {
 					if (btn !== button) {
+						if (window.decadeUI) {
+							let checkPerfectPair = lib.element.player.perfectPair || lib.element.Player.prototype.perfectPair;
+							lib.element.player.perfectPair = checkPerfectPair;
+						}
 						if (
 							// @ts-expect-error 祖宗之法就是这么写的
 							lib.element.player.perfectPair.call(
@@ -1659,7 +1663,7 @@ export const transCharacter = async (event, _trigger, player) => {
 		if (target.hasSkill(key, null, null, false)) {
 			const cards = map1.get(key);
 			if (cards?.length) {
-				target.$addToExpansion(cards, null, key);
+				target.$addToExpansion(cards, null, Array.isArray(key) ? key : [key]);
 				target.markSkill(key);
 			}
 		}
@@ -1668,7 +1672,7 @@ export const transCharacter = async (event, _trigger, player) => {
 		if (player.hasSkill(key, null, null, false)) {
 			const cards = map2.get(key);
 			if (cards?.length) {
-				player.$addToExpansion(cards, null, key);
+				player.$addToExpansion(cards, null, Array.isArray(key) ? key : [key]);
 				player.markSkill(key);
 			}
 		}
