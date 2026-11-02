@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
+<title>Checking Corporate Emissions Reporting &middot; Xiangzhong (Shaun) Meng</title>
+<meta name="description" content="How a summer research project traced reported greenhouse-gas figures back through their calculation basis.">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="topbar">
+      <a class="mark" href="../">Shaun Meng</a>
+      <nav aria-label="Site">
+        <a class="keep" href="../">Home</a>
+        <a href="../#research">Research</a>
+        <a href="../#projects">Projects</a>
+        <a class="keep" href="../blog/">Blog</a>
+      </nav>
+    </div>
+    <div class="hero-body">
+      <p class="eyebrow">Project &middot; Supervision &middot; 2026</p>
+      <h1 class="statement">Checking Corporate Emissions Reporting</h1>
+      <p class="role">Summer research at the Centre for Climate Finance &amp; Investment, Imperial College London. I
+      supervised the interns who carried it out.</p>
+      <div class="buttons"><a class="btn" href="../#projects">All Projects</a></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="band white">
+    <div class="wrap article">
+      <p class="lead">A reported emissions figure is only as good as the weakest link in the chain behind it. Two
+      companies can report the same physical emission and publish different numbers, legitimately, because of the
+      warming-potential vintage, the Scope 3 method and the unit. The project checked each link in turn.</p>
+
+      <figure class="diagram">
+        <div class="scroll-x">
+          <svg viewBox="0 0 900 120" role="img" aria-label="The chain behind a reported emissions figure: source report, extracted figure, unit, GWP basis, Scope 3 method, assurance, ranking.">
+            <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#9aa9bb"/></marker></defs>
+            <g font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif" font-size="13" font-weight="600" text-anchor="middle">
+              <rect x="4" y="34" width="110" height="52" rx="10" fill="#12406b"/><text x="59" y="65" fill="#fff">Source Report</text>
+              <rect x="132" y="34" width="110" height="52" rx="10" fill="#fff" stroke="#12406b" stroke-width="1.5"/><text x="187" y="65" fill="#12406b">Extracted Figure</text>
+              <rect x="260" y="34" width="110" height="52" rx="10" fill="#e3f4f5" stroke="#1b8a95" stroke-width="1.5"/><text x="315" y="65" fill="#14666e">Unit</text>
+              <rect x="388" y="34" width="110" height="52" rx="10" fill="#e3f4f5" stroke="#1b8a95" stroke-width="1.5"/><text x="443" y="65" fill="#14666e">GWP Basis</text>
+              <rect x="516" y="34" width="110" height="52" rx="10" fill="#e3f4f5" stroke="#1b8a95" stroke-width="1.5"/><text x="571" y="65" fill="#14666e">Scope 3 Method</text>
+              <rect x="644" y="34" width="110" height="52" rx="10" fill="#e3f4f5" stroke="#1b8a95" stroke-width="1.5"/><text x="699" y="65" fill="#14666e">Assurance</text>
+              <rect x="772" y="34" width="110" height="52" rx="10" fill="#12406b"/><text x="827" y="65" fill="#fff">Ranking</text>
+            </g>
+            <g stroke="#9aa9bb" stroke-width="2" marker-end="url(#arr)">
+              <path d="M116,60 H130"/><path d="M244,60 H258"/><path d="M372,60 H386"/><path d="M500,60 H514"/><path d="M628,60 H642"/><path d="M756,60 H770"/>
+            </g>
+            <text x="507" y="108" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif" font-size="12" fill="#6b7686">checks on each reported figure</text>
+            <path d="M262,96 H752" stroke="#1b8a95" stroke-width="1.5" fill="none"/>
+          </svg>
+        </div>
+        <figcaption>Figure 1. The chain behind a reported emissions figure. Each link was checked in turn; a figure can only
+        be compared once every link is known.</figcaption>
+      </figure>
+
+      <h2>What Was Checked</h2>
+      <div class="scroll-x">
+        <table class="checks">
+          <thead><tr><th>Check</th><th>Question</th><th>How</th></tr></thead>
+          <tbody>
+            <tr><td>Unit</td><td>Is the figure in the unit it claims?</td><td>Compare its magnitude with the report's own totals and with similar firms</td></tr>
+            <tr><td>GWP Basis</td><td>Which IPCC assessment supplied the warming potentials?</td><td>Divide reported tCO&#8322;e by the mass of each gas to recover the factor actually applied, and match it to published IPCC values</td></tr>
+            <tr><td>Scope 3 Method</td><td>How were indirect emissions estimated?</td><td>Read the method the company states for each Scope 3 category</td></tr>
+            <tr><td>Magnitude</td><td>Is the value plausible at all?</td><td>Flag outliers and review each against its source report</td></tr>
+            <tr><td>Assurance</td><td>Did anyone check the figure, and how strictly?</td><td>Read the assurance statement: the level of assurance, the standard, the boundary and the materiality threshold</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <figure class="diagram">
+        <div class="scroll-x">
+          <svg viewBox="0 0 760 240" role="img" aria-label="A methane example: reported tonnes of CO2-equivalent divided by tonnes of methane gives the implied warming potential, which is matched to the IPCC values 21, 23, 25, 28 and 29.8.">
+            <g font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif" text-anchor="middle">
+              <rect x="40" y="20" width="190" height="56" rx="10" fill="#fff" stroke="#12406b" stroke-width="1.5"/>
+              <text x="135" y="44" font-size="13" font-weight="600" fill="#12406b">Reported tCO&#8322;e</text>
+              <text x="135" y="63" font-size="12" fill="#6b7686">for methane</text>
+              <text x="258" y="56" font-size="26" fill="#9aa9bb">&#247;</text>
+              <rect x="286" y="20" width="190" height="56" rx="10" fill="#fff" stroke="#12406b" stroke-width="1.5"/>
+              <text x="381" y="44" font-size="13" font-weight="600" fill="#12406b">Tonnes of methane</text>
+              <text x="381" y="63" font-size="12" fill="#6b7686">from the same report</text>
+              <text x="504" y="56" font-size="26" fill="#9aa9bb">=</text>
+              <rect x="532" y="20" width="190" height="56" rx="10" fill="#1b8a95"/>
+              <text x="627" y="44" font-size="13" font-weight="600" fill="#fff">Implied GWP factor</text>
+              <text x="627" y="63" font-size="12" fill="#dff6f7">the factor actually applied</text>
+              <line x1="60" y1="170" x2="700" y2="170" stroke="#9aa9bb" stroke-width="2"/>
+              <g font-size="12" fill="#364152">
+                <line x1="149" y1="162" x2="149" y2="178" stroke="#12406b" stroke-width="2"/><text x="149" y="196">21</text><text x="149" y="212" fill="#6b7686">SAR</text>
+                <line x1="240" y1="162" x2="240" y2="178" stroke="#12406b" stroke-width="2"/><text x="240" y="196">23</text><text x="240" y="212" fill="#6b7686">TAR</text>
+                <line x1="331" y1="162" x2="331" y2="178" stroke="#12406b" stroke-width="2"/><text x="331" y="196">25</text><text x="331" y="212" fill="#6b7686">AR4</text>
+                <line x1="469" y1="162" x2="469" y2="178" stroke="#12406b" stroke-width="2"/><text x="469" y="196">28</text><text x="469" y="212" fill="#6b7686">AR5</text>
+                <line x1="549" y1="162" x2="549" y2="178" stroke="#12406b" stroke-width="2"/><text x="549" y="196">29.8</text><text x="562" y="212" fill="#6b7686">AR6 (fossil)</text>
+              </g>
+              <path d="M627,78 C627,118 469,118 469,152" fill="none" stroke="#1b8a95" stroke-width="2" stroke-dasharray="5 4"/>
+              <circle cx="469" cy="170" r="7" fill="#1b8a95"/>
+              <text x="380" y="134" font-size="12" fill="#14666e" font-weight="600">an implied factor of 28 means the figure was computed on AR5</text>
+            </g>
+          </svg>
+        </div>
+        <figcaption>Figure 2. Recovering the warming-potential basis, with methane as an example. The tick marks are the
+        published IPCC 100-year values for methane; where several assessments share a value, the basis cannot be pinned down.</figcaption>
+      </figure>
+
+      <p>The results, including the coverage, the data-quality review and the assurance analysis, are shared with the
+      project's stakeholders through a dashboard.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="legal"><a href="../">Xiangzhong (Shaun) Meng</a> &middot; <a href="mailto:xiangzhong.meng@hotmail.com">xiangzhong.meng@hotmail.com</a> &middot; Last Updated November 2026</div>
+  </div>
+</footer>
+
+</body>
+</html>

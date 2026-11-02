@@ -257,3 +257,20 @@ footer .wrap { display: flex; justify-content: space-between; flex-wrap: wrap; g
 .tk-id { font: 600 10px var(--sans); fill: rgba(255, 255, 255, 0.42); text-anchor: middle; }
 .ticker-thumb .tk-id { font-size: 13px; fill: rgba(255, 255, 255, 0.6); }
 @media (prefers-reduced-motion: reduce) { .ticker { animation: none; } }
+
+/* China's carbon exchanges */
+.ex-line { fill: none; stroke: rgba(255, 255, 255, 0.42); stroke-width: 1.4; }
+.ex-line.nat { stroke: #8fe3ea; stroke-width: 2.6; }
+.ex-lbl { font: 600 11px var(--sans); fill: rgba(255, 255, 255, 0.62); text-anchor: middle; }
+.ex-lbl.nat { fill: #8fe3ea; }
+.ticker-thumb .ex-lbl { font-size: 13px; }
+
+/* diagrams and tables on project pages */
+.scroll-x { overflow-x: auto; }
+.diagram svg { min-width: 680px; width: 100%; height: auto; display: block; }
+.diagram { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 18px 18px 12px; margin: 26px 0; }
+table.checks { width: 100%; min-width: 620px; border-collapse: collapse; margin: 6px 0 10px; font-size: 0.95rem; }
+table.checks th { text-align: left; font: 600 0.78rem/1.2 var(--sans); letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent);
+                  border-bottom: 2px solid var(--accent); padding: 10px 12px; }
+table.checks td { border-bottom: 1px solid var(--line); padding: 12px; vertical-align: top; }
+table.checks td:first-child { font-weight: 600; color: var(--ink); white-space: nowrap; }
