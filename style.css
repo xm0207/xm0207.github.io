@@ -272,8 +272,13 @@ table.checks td:first-child { font-weight: 600; color: var(--ink); white-space: 
 
 
 
+
+/* keep mixed-case names (BEcon, MSc, BritxAI) as written inside upper-case labels */
+.nocase { text-transform: none; }
+
+
 /* thesis: China's regional pilot markets and the national market */
-.map-land { fill: rgba(255, 255, 255, 0.07); stroke: rgba(255, 255, 255, 0.30); stroke-width: 0.8; stroke-linejoin: round; }
+.map-land { stroke-width: 0.8; stroke-linejoin: round; }
 .arc { fill: none; stroke: rgba(143, 227, 234, 0.32); stroke-width: 1.2; }
 .city { fill: #8fe3ea; }
 .nat-node { fill: #1b8a95; stroke: #bff6f8; stroke-width: 1.5; }
