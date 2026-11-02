@@ -7,24 +7,35 @@
 <meta name="description" content="Xiangzhong (Shaun) Meng, Imperial College London. Sustainable finance, AI in finance, labour economics of AI.">
 <style>
   :root {
-    --text: #1d1d1f; --muted: #5f6368; --rule: #e3e3e3; --link: #0b4f8a; --bg: #ffffff;
+    --text: #1f2328; --muted: #5b6470; --rule: #e6e8eb; --link: #0b5394; --accent: #0f3d68;
+    --bg-top: #e3ebf5; --bg-bottom: #f7f6f2; --card: #ffffff;
+    --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 12px 32px rgba(16, 24, 40, 0.08);
   }
   @media (prefers-color-scheme: dark) {
-    :root { --text: #e8e8e8; --muted: #a0a4a8; --rule: #333; --link: #8cc4ff; --bg: #141414; }
+    :root {
+      --text: #e6e8eb; --muted: #9aa4b1; --rule: #2a313b; --link: #8ec5ff; --accent: #8ec5ff;
+      --bg-top: #0d1b2e; --bg-bottom: #0f1115; --card: #151a21;
+      --shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+    }
   }
   * { box-sizing: border-box; }
+  html { background: var(--bg-bottom) linear-gradient(180deg, var(--bg-top) 0, var(--bg-bottom) 620px) no-repeat; }
   body {
-    margin: 0; background: var(--bg); color: var(--text);
+    margin: 0; color: var(--text);
     font: 17px/1.6 Georgia, "Times New Roman", serif;
   }
-  main { max-width: 760px; margin: 0 auto; padding: 56px 24px 72px; }
-  h1 { font-size: 2rem; font-weight: normal; margin: 0 0 4px; }
-  .role { color: var(--muted); margin: 0 0 14px; }
+  main {
+    max-width: 800px; margin: 56px auto 64px; padding: 52px 60px 44px;
+    background: var(--card); border-radius: 14px; box-shadow: var(--shadow);
+    border-top: 4px solid var(--accent);
+  }
+  h1 { font-size: 2.1rem; font-weight: normal; margin: 0 0 6px; letter-spacing: 0.01em; }
+  .role { color: var(--muted); margin: 0 0 16px; }
   nav a { margin-right: 18px; white-space: nowrap; }
   h2 {
-    font: 600 0.8rem/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
-    border-bottom: 1px solid var(--rule); padding-bottom: 8px; margin: 44px 0 16px;
+    font: 600 0.78rem/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent);
+    border-bottom: 1px solid var(--rule); padding-bottom: 9px; margin: 44px 0 18px;
   }
   a { color: var(--link); text-decoration: none; }
   a:hover { text-decoration: underline; }
@@ -33,7 +44,11 @@
   .title { font-weight: bold; }
   .meta { color: var(--muted); }
   .note { margin-top: 4px; }
-  footer { margin-top: 56px; color: var(--muted); font-size: 0.85rem; }
+  footer { margin-top: 48px; color: var(--muted); font-size: 0.85rem; }
+  @media (max-width: 640px) {
+    main { margin: 0; padding: 36px 22px 32px; border-radius: 0; box-shadow: none; }
+    body { font-size: 16px; }
+  }
 </style>
 </head>
 <body>
@@ -102,12 +117,6 @@
     <div class="meta">MSc course project, Machine Learning and Finance &middot; 2025</div>
     <p class="note">A first LightGBM model predicts auxiliary targets from accounting, sector and earnings-surprise features;
     a second predicts forward returns from them, with hyperparameters tuned by Optuna.</p>
-  </div>
-
-  <div class="item">
-    <div><span class="title">Algorithmic trading on Optibook</span></div>
-    <div class="meta">Optiver Trading Academy and the MSc course on market microstructure &middot; 2025</div>
-    <p class="note">Dual-listing arbitrage and ETF hedging strategies on Optiver's trading simulator.</p>
   </div>
 
   <div class="item">
