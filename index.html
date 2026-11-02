@@ -6,140 +6,524 @@
 <meta name="color-scheme" content="light only">
 <title>Xiangzhong (Shaun) Meng</title>
 <meta name="description" content="Xiangzhong (Shaun) Meng, Imperial College London. Sustainable finance, AI in finance, labour economics of AI.">
-<style>
-  :root {
-    --text: #1f2328; --muted: #5b6470; --rule: #e6e8eb; --link: #0b5394; --accent: #0f3d68;
-    --bg-top: #e3ebf5; --bg-bottom: #f7f6f2; --card: #ffffff;
-    --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 12px 32px rgba(16, 24, 40, 0.08);
-  }
-  * { box-sizing: border-box; }
-  html { background: var(--bg-bottom) linear-gradient(180deg, var(--bg-top) 0, var(--bg-bottom) 620px) no-repeat; }
-  body {
-    margin: 0; color: var(--text);
-    font: 17px/1.6 Georgia, "Times New Roman", serif;
-  }
-  main {
-    max-width: 800px; margin: 56px auto 64px; padding: 52px 60px 44px;
-    background: var(--card); border-radius: 14px; box-shadow: var(--shadow);
-    border-top: 4px solid var(--accent);
-  }
-  h1 { font-size: 2.1rem; font-weight: normal; margin: 0 0 6px; letter-spacing: 0.01em; }
-  .role { color: var(--muted); margin: 0 0 16px; }
-  nav a { margin-right: 18px; white-space: nowrap; }
-  h2 {
-    font: 600 0.78rem/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-    letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent);
-    border-bottom: 1px solid var(--rule); padding-bottom: 9px; margin: 44px 0 18px;
-  }
-  a { color: var(--link); text-decoration: none; }
-  a:hover { text-decoration: underline; }
-  p { margin: 0 0 12px; }
-  .item { margin: 0 0 20px; }
-  .title { font-weight: bold; }
-  .meta { color: var(--muted); }
-  .note { margin-top: 4px; }
-  footer { margin-top: 48px; color: var(--muted); font-size: 0.85rem; }
-  @media (max-width: 640px) {
-    main { margin: 0; padding: 36px 22px 32px; border-radius: 0; box-shadow: none; }
-    body { font-size: 16px; }
-  }
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+<header class="hero has-ticker">
+  <div class="wrap">
+    <div class="topbar">
+      <a class="mark" href="./">Shaun Meng</a>
+      <nav aria-label="Sections">
+        <a href="#research">Research</a>
+        <a href="#projects">Projects</a>
+        <a href="#insights">Insights</a>
+        <a href="#background">Background</a>
+        <a class="keep" href="blog/">Blog</a>
+      </nav>
+    </div>
+    <div class="hero-body split">
+      <div>
+        <p class="eyebrow">Xiangzhong (Shaun) Meng &middot; Imperial Business School</p>
+        <h1 class="statement">Research on Sustainable Finance and the Economics of AI</h1>
+        <ul class="chips" aria-label="Research interests">
+          <li>Sustainable Finance</li>
+          <li>AI in Finance</li>
+          <li>Labour Economics of AI</li>
+        </ul>
+        <div class="buttons">
+          <a class="btn primary" href="#research">Explore Research</a>
+          <a class="btn" href="mailto:xiangzhong.meng@hotmail.com">Email Me</a>
+          <a class="btn" href="https://www.linkedin.com/in/xiangzhong-meng/">LinkedIn</a>
+          <a class="btn" href="https://github.com/xm0207">GitHub</a>
+        </div>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <svg viewBox="0 0 320 330">
+          <defs>
+            <linearGradient id="leafGrad" x1="0" y1="1" x2="0" y2="0">
+              <stop offset="0" stop-color="#2f8a58"/><stop offset="1" stop-color="#63c98f"/>
+            </linearGradient>
+            <mask id="leafMask" maskUnits="userSpaceOnUse" x="-90" y="-150" width="180" height="170">
+              <path fill="#fff" d="M0,0 C-18,-6 -52,-14 -64,-42 C-76,-70 -60,-104 -30,-118 C-12,-126 2,-122 10,-132 C22,-118 52,-110 64,-82 C76,-54 66,-20 36,-6 C22,0 10,2 0,0 Z"/>
+              <path stroke="#000" stroke-width="5" stroke-linecap="round" fill="none"
+                    d="M-6,-24 L-60,-34 M-4,-48 L-70,-58 M-2,-74 L-62,-90 M2,-98 L-36,-116 M10,-26 L62,-18 M12,-50 L72,-48 M14,-76 L70,-82 M14,-100 L52,-110"/>
+              <g fill="#000"><ellipse cx="-17" cy="-62" rx="3" ry="6"/><ellipse cx="29" cy="-64" rx="3" ry="6"/><ellipse cx="-12" cy="-88" rx="2.5" ry="5"/><ellipse cx="30" cy="-90" rx="2.5" ry="5"/></g>
+            </mask>
+            <g id="leaf">
+              <path fill="url(#leafGrad)" mask="url(#leafMask)" d="M0,0 C-18,-6 -52,-14 -64,-42 C-76,-70 -60,-104 -30,-118 C-12,-126 2,-122 10,-132 C22,-118 52,-110 64,-82 C76,-54 66,-20 36,-6 C22,0 10,2 0,0 Z"/>
+              <path d="M2,-2 Q8,-60 10,-126" fill="none" stroke="#a6e6bf" stroke-width="2" stroke-linecap="round" opacity="0.75"/>
+            </g>
+          </defs>
+          <g transform="translate(0,26)">
+            <g fill="none" stroke="#2c7a4c" stroke-width="4" stroke-linecap="round">
+              <path d="M160,228 C156,200 132,170 112,132"/>
+              <path d="M162,228 C168,196 192,160 206,120"/>
+              <path d="M160,228 C160,180 158,140 158,98"/>
+              <path d="M158,228 C150,212 140,198 126,184"/>
+              <path d="M164,228 C172,214 186,198 198,180"/>
+            </g>
+            <g transform="translate(126,184) rotate(-64) scale(0.58)"><g class="sway s3"><use href="#leaf"/></g></g>
+            <g transform="translate(198,180) rotate(60) scale(0.6)"><g class="sway s4"><use href="#leaf"/></g></g>
+            <g transform="translate(112,132) rotate(-36) scale(0.82)"><g class="sway"><use href="#leaf"/></g></g>
+            <g transform="translate(206,120) rotate(32) scale(0.86)"><g class="sway s2"><use href="#leaf"/></g></g>
+            <g transform="translate(158,98) rotate(-3) scale(0.92)"><g class="sway s3"><use href="#leaf"/></g></g>
+            <rect x="110" y="222" width="100" height="14" rx="4" fill="#eef3f8"/>
+            <path d="M116,236 L204,236 L194,298 L126,298 Z" fill="#cfdbe7"/>
+            <path d="M116,236 L204,236 L202,248 L118,248 Z" fill="#bccbda"/>
+          </g>
+          <g transform="translate(24,150)"><g class="co2"><circle r="14"/><text y="3.5">CO&#8322;</text></g></g>
+          <g transform="translate(30,220)"><g class="co2 d2"><circle r="12"/><text y="3.5">CO&#8322;</text></g></g>
+          <g transform="translate(298,176)"><g class="co2 r d1"><circle r="14"/><text y="3.5">CO&#8322;</text></g></g>
+          <g transform="translate(292,250)"><g class="co2 r d3"><circle r="12"/><text y="3.5">CO&#8322;</text></g></g>
+          <g transform="translate(150,58)"><g class="o2"><circle r="12"/><text y="3.5">O&#8322;</text></g></g>
+          <g transform="translate(96,96)"><g class="o2 d2"><circle r="10"/><text y="3.5">O&#8322;</text></g></g>
+          <g transform="translate(222,82)"><g class="o2 d1"><circle r="11"/><text y="3.5">O&#8322;</text></g></g>
+          <g transform="translate(186,40)"><g class="o2 d4"><circle r="9"/><text y="3.5">O&#8322;</text></g></g>
+        </svg>
+      </div>
+    </div>
+  </div>
+  <svg class="hero-bg" viewBox="0 0 1200 130" preserveAspectRatio="xMinYMax slice" aria-hidden="true">
+<g class="ticker">
+<path class="tk-price" d="M15,78 L45,72 L75,79 L105,75 L135,77 L165,79 L195,75 L225,67 L255,69 L285,63 L315,65 L345,67 L375,56 L405,93 L435,95 L465,91 L495,93 L525,105 L555,101 L585,103 L615,108 L645,104 L675,106 L705,108 L735,104 L765,96 L795,98 L825,90 L855,92 L885,94 L915,90 L945,92 L975,78 L1005,74 L1035,76 L1065,70 L1095,78 L1125,80 L1155,82 L1185,78"/>
+<path class="tk-floor" d="M0,84 L30,84 L30,76 L60,76 L60,81 L90,81 L90,81 L120,81 L120,81 L150,81 L150,81 L180,81 L180,81 L210,81 L210,71 L240,71 L240,71 L270,71 L270,69 L300,69 L300,69 L330,69 L330,69 L360,69 L360,62 L390,62 L390,97 L420,97 L420,97 L450,97 L450,97 L480,97 L480,97 L510,97 L510,107 L540,107 L540,107 L570,107 L570,107 L600,107 L600,110 L630,110 L630,110 L660,110 L660,110 L690,110 L690,110 L720,110 L720,110 L750,110 L750,100 L780,100 L780,100 L810,100 L810,96 L840,96 L840,96 L870,96 L870,96 L900,96 L900,96 L930,96 L930,96 L960,96 L960,80 L990,80 L990,80 L1020,80 L1020,80 L1050,80 L1050,72 L1080,72 L1080,84 L1110,84 L1110,84 L1140,84 L1140,84 L1170,84 L1170,84 L1200,84"/>
+<circle class="tk-dot" cx="15" cy="52" r="3.2"/>
+<text class="tk-id" x="15" y="43">ID 3812</text>
+<circle class="tk-dot" cx="45" cy="37" r="3.2"/>
+<circle class="tk-dot set" cx="75" cy="81" r="4.5"/>
+<text class="tk-id" x="75" y="72">ID 2555</text>
+<circle class="tk-dot" cx="105" cy="30" r="3.2"/>
+<circle class="tk-dot" cx="135" cy="71" r="3.2"/>
+<circle class="tk-dot" cx="165" cy="56" r="3.2"/>
+<circle class="tk-dot" cx="195" cy="29" r="3.2"/>
+<text class="tk-id" x="195" y="20">ID 0770</text>
+<circle class="tk-dot" cx="225" cy="69" r="3.2"/>
+<circle class="tk-dot" cx="255" cy="27" r="3.2"/>
+<circle class="tk-dot" cx="285" cy="62" r="3.2"/>
+<circle class="tk-dot" cx="315" cy="30" r="3.2"/>
+<circle class="tk-dot" cx="345" cy="32" r="3.2"/>
+<circle class="tk-dot" cx="375" cy="61" r="3.2"/>
+<text class="tk-id" x="375" y="52">ID 3776</text>
+<circle class="tk-dot set" cx="405" cy="97" r="4.5"/>
+<text class="tk-id" x="405" y="88">ID 2458</text>
+<circle class="tk-dot" cx="435" cy="35" r="3.2"/>
+<circle class="tk-dot" cx="465" cy="44" r="3.2"/>
+<circle class="tk-dot" cx="495" cy="79" r="3.2"/>
+<circle class="tk-dot set" cx="525" cy="107" r="4.5"/>
+<text class="tk-id" x="525" y="98">ID 3525</text>
+<circle class="tk-dot" cx="555" cy="75" r="3.2"/>
+<text class="tk-id" x="555" y="66">ID 1451</text>
+<circle class="tk-dot" cx="585" cy="59" r="3.2"/>
+<circle class="tk-dot set" cx="615" cy="110" r="4.5"/>
+<text class="tk-id" x="615" y="101">ID 1345</text>
+<circle class="tk-dot" cx="645" cy="28" r="3.2"/>
+<circle class="tk-dot" cx="675" cy="100" r="3.2"/>
+<circle class="tk-dot" cx="705" cy="49" r="3.2"/>
+<circle class="tk-dot" cx="735" cy="37" r="3.2"/>
+<text class="tk-id" x="735" y="28">ID 0735</text>
+<circle class="tk-dot" cx="765" cy="34" r="3.2"/>
+<circle class="tk-dot" cx="795" cy="51" r="3.2"/>
+<circle class="tk-dot set" cx="825" cy="96" r="4.5"/>
+<text class="tk-id" x="825" y="87">ID 2670</text>
+<circle class="tk-dot" cx="855" cy="40" r="3.2"/>
+<circle class="tk-dot" cx="885" cy="75" r="3.2"/>
+<circle class="tk-dot" cx="915" cy="80" r="3.2"/>
+<text class="tk-id" x="915" y="71">ID 4969</text>
+<circle class="tk-dot" cx="945" cy="57" r="3.2"/>
+<circle class="tk-dot" cx="975" cy="72" r="3.2"/>
+<circle class="tk-dot" cx="1005" cy="30" r="3.2"/>
+<circle class="tk-dot" cx="1035" cy="29" r="3.2"/>
+<circle class="tk-dot" cx="1065" cy="42" r="3.2"/>
+<circle class="tk-dot set" cx="1095" cy="84" r="4.5"/>
+<text class="tk-id" x="1095" y="75">ID 2311</text>
+<circle class="tk-dot" cx="1125" cy="62" r="3.2"/>
+<circle class="tk-dot" cx="1155" cy="52" r="3.2"/>
+<circle class="tk-dot" cx="1185" cy="76" r="3.2"/>
+<path class="tk-price" d="M1215,78 L1245,72 L1275,79 L1305,75 L1335,77 L1365,79 L1395,75 L1425,67 L1455,69 L1485,63 L1515,65 L1545,67 L1575,56 L1605,93 L1635,95 L1665,91 L1695,93 L1725,105 L1755,101 L1785,103 L1815,108 L1845,104 L1875,106 L1905,108 L1935,104 L1965,96 L1995,98 L2025,90 L2055,92 L2085,94 L2115,90 L2145,92 L2175,78 L2205,74 L2235,76 L2265,70 L2295,78 L2325,80 L2355,82 L2385,78"/>
+<path class="tk-floor" d="M1200,84 L1230,84 L1230,76 L1260,76 L1260,81 L1290,81 L1290,81 L1320,81 L1320,81 L1350,81 L1350,81 L1380,81 L1380,81 L1410,81 L1410,71 L1440,71 L1440,71 L1470,71 L1470,69 L1500,69 L1500,69 L1530,69 L1530,69 L1560,69 L1560,62 L1590,62 L1590,97 L1620,97 L1620,97 L1650,97 L1650,97 L1680,97 L1680,97 L1710,97 L1710,107 L1740,107 L1740,107 L1770,107 L1770,107 L1800,107 L1800,110 L1830,110 L1830,110 L1860,110 L1860,110 L1890,110 L1890,110 L1920,110 L1920,110 L1950,110 L1950,100 L1980,100 L1980,100 L2010,100 L2010,96 L2040,96 L2040,96 L2070,96 L2070,96 L2100,96 L2100,96 L2130,96 L2130,96 L2160,96 L2160,80 L2190,80 L2190,80 L2220,80 L2220,80 L2250,80 L2250,72 L2280,72 L2280,84 L2310,84 L2310,84 L2340,84 L2340,84 L2370,84 L2370,84 L2400,84"/>
+<circle class="tk-dot" cx="1215" cy="52" r="3.2"/>
+<text class="tk-id" x="1215" y="43">ID 3812</text>
+<circle class="tk-dot" cx="1245" cy="37" r="3.2"/>
+<circle class="tk-dot set" cx="1275" cy="81" r="4.5"/>
+<text class="tk-id" x="1275" y="72">ID 2555</text>
+<circle class="tk-dot" cx="1305" cy="30" r="3.2"/>
+<circle class="tk-dot" cx="1335" cy="71" r="3.2"/>
+<circle class="tk-dot" cx="1365" cy="56" r="3.2"/>
+<circle class="tk-dot" cx="1395" cy="29" r="3.2"/>
+<text class="tk-id" x="1395" y="20">ID 0770</text>
+<circle class="tk-dot" cx="1425" cy="69" r="3.2"/>
+<circle class="tk-dot" cx="1455" cy="27" r="3.2"/>
+<circle class="tk-dot" cx="1485" cy="62" r="3.2"/>
+<circle class="tk-dot" cx="1515" cy="30" r="3.2"/>
+<circle class="tk-dot" cx="1545" cy="32" r="3.2"/>
+<circle class="tk-dot" cx="1575" cy="61" r="3.2"/>
+<text class="tk-id" x="1575" y="52">ID 3776</text>
+<circle class="tk-dot set" cx="1605" cy="97" r="4.5"/>
+<text class="tk-id" x="1605" y="88">ID 2458</text>
+<circle class="tk-dot" cx="1635" cy="35" r="3.2"/>
+<circle class="tk-dot" cx="1665" cy="44" r="3.2"/>
+<circle class="tk-dot" cx="1695" cy="79" r="3.2"/>
+<circle class="tk-dot set" cx="1725" cy="107" r="4.5"/>
+<text class="tk-id" x="1725" y="98">ID 3525</text>
+<circle class="tk-dot" cx="1755" cy="75" r="3.2"/>
+<text class="tk-id" x="1755" y="66">ID 1451</text>
+<circle class="tk-dot" cx="1785" cy="59" r="3.2"/>
+<circle class="tk-dot set" cx="1815" cy="110" r="4.5"/>
+<text class="tk-id" x="1815" y="101">ID 1345</text>
+<circle class="tk-dot" cx="1845" cy="28" r="3.2"/>
+<circle class="tk-dot" cx="1875" cy="100" r="3.2"/>
+<circle class="tk-dot" cx="1905" cy="49" r="3.2"/>
+<circle class="tk-dot" cx="1935" cy="37" r="3.2"/>
+<text class="tk-id" x="1935" y="28">ID 0735</text>
+<circle class="tk-dot" cx="1965" cy="34" r="3.2"/>
+<circle class="tk-dot" cx="1995" cy="51" r="3.2"/>
+<circle class="tk-dot set" cx="2025" cy="96" r="4.5"/>
+<text class="tk-id" x="2025" y="87">ID 2670</text>
+<circle class="tk-dot" cx="2055" cy="40" r="3.2"/>
+<circle class="tk-dot" cx="2085" cy="75" r="3.2"/>
+<circle class="tk-dot" cx="2115" cy="80" r="3.2"/>
+<text class="tk-id" x="2115" y="71">ID 4969</text>
+<circle class="tk-dot" cx="2145" cy="57" r="3.2"/>
+<circle class="tk-dot" cx="2175" cy="72" r="3.2"/>
+<circle class="tk-dot" cx="2205" cy="30" r="3.2"/>
+<circle class="tk-dot" cx="2235" cy="29" r="3.2"/>
+<circle class="tk-dot" cx="2265" cy="42" r="3.2"/>
+<circle class="tk-dot set" cx="2295" cy="84" r="4.5"/>
+<text class="tk-id" x="2295" y="75">ID 2311</text>
+<circle class="tk-dot" cx="2325" cy="62" r="3.2"/>
+<circle class="tk-dot" cx="2355" cy="52" r="3.2"/>
+<circle class="tk-dot" cx="2385" cy="76" r="3.2"/>
+</g>
+  </svg>
+</header>
+
 <main>
 
-  <h1>Xiangzhong (Shaun) Meng</h1>
-  <p class="role">Teaching Assistant, Imperial Business School<br>
-  Research interests: Sustainable finance, AI in finance, Labour economics of AI</p>
-  <nav>
-    <a href="mailto:xm24@ic.ac.uk">xm24@ic.ac.uk</a>
-    <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6460979">SSRN</a>
-    <a href="https://www.linkedin.com/in/xiangzhong-meng/">LinkedIn</a>
-    <a href="https://github.com/xm0207">GitHub</a>
-  </nav>
+  <section class="band navy" aria-label="Highlights">
+    <div class="wrap highlights">
+      <div><strong>FMA Europe 2026</strong><span>Working paper on carbon offset futures, accepted for presentation</span></div>
+      <div><strong>Distinction</strong><span>MSc Risk Management and Financial Engineering, Imperial College London</span></div>
+      <div><strong>Best Research Project Prize</strong><span>Imperial Business School, 2025</span></div>
+      <div><strong>Co-Founder</strong><span>BritxAI, builder of the AI wellness companion for Sofiaa Health</span></div>
+    </div>
+  </section>
 
-  <h2>Research</h2>
+  <section class="band white" id="research">
+    <div class="wrap">
+      <div class="section-head">
+        <div>
+          <h2>Research</h2>
+          <p>Carbon markets, and how AI changes work and value in finance.</p>
+        </div>
+      </div>
+      <div class="cards3">
 
-  <div class="item">
-    <div><span class="title">The economics of AI adoption in insurance</span></div>
-    <div class="meta">Research project, Centre for Climate Finance &amp; Investment, Imperial College London &middot; 2026</div>
-    <p class="note">How AI adoption changes labour costs and value added in insurance across jurisdictions: a task-based
-    model, cross-country datasets built from public statistics, and expert interviews.</p>
-  </div>
+        <article class="tile">
+          <div class="thumb" aria-hidden="true">
+            <svg viewBox="0 0 320 180">
+              <defs><linearGradient id="tg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a2340"/><stop offset="1" stop-color="#1b6670"/></linearGradient></defs>
+              <rect width="320" height="180" fill="url(#tg1)"/>
+              <g fill="rgba(255,255,255,0.16)">
+                <rect x="36" y="38" width="22" height="22" rx="5"/><rect x="64" y="38" width="22" height="22" rx="5"/><rect x="92" y="38" width="22" height="22" rx="5" fill="#8fe3ea"/><rect x="120" y="38" width="22" height="22" rx="5"/>
+                <rect x="36" y="66" width="22" height="22" rx="5" fill="#8fe3ea"/><rect x="64" y="66" width="22" height="22" rx="5"/><rect x="92" y="66" width="22" height="22" rx="5"/><rect x="120" y="66" width="22" height="22" rx="5" fill="#8fe3ea"/>
+                <rect x="36" y="94" width="22" height="22" rx="5"/><rect x="64" y="94" width="22" height="22" rx="5" fill="#8fe3ea"/><rect x="92" y="94" width="22" height="22" rx="5"/><rect x="120" y="94" width="22" height="22" rx="5"/>
+                <rect x="36" y="122" width="22" height="22" rx="5"/><rect x="64" y="122" width="22" height="22" rx="5"/><rect x="92" y="122" width="22" height="22" rx="5" fill="#8fe3ea"/><rect x="120" y="122" width="22" height="22" rx="5"/>
+              </g>
+              <g fill="rgba(255,255,255,0.85)"><rect x="186" y="112" width="16" height="32" rx="3"/><rect x="210" y="96" width="16" height="48" rx="3"/><rect x="234" y="78" width="16" height="66" rx="3"/><rect x="258" y="58" width="16" height="86" rx="3"/></g>
+              <path d="M180,104 L210,88 L240,70 L276,46" fill="none" stroke="#8fe3ea" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="tile-body">
+            <span class="label">Research Project &middot; 2026</span>
+            <h3>The Economics of AI Adoption in Insurance</h3>
+            <p>How AI adoption changes labour costs and value added in insurance across jurisdictions, from a task-based
+            model, cross-country public statistics and expert interviews.</p>
+            <span class="meta">Centre for Climate Finance &amp; Investment, Imperial College London</span>
+          </div>
+        </article>
 
-  <div class="item">
-    <div><span class="title">Eligibility Design and Participation Exit in Carbon Offset Futures</span>, with Ying Liu</div>
-    <div class="meta">Working paper &middot; FMA Europe 2026 &middot; <a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6460979">SSRN 6460979</a></div>
-    <p class="note">Exchange-traded futures on voluntary carbon credits whose deliverable grade buyers cannot verify. A
-    regime-switching framework traces how information moved across carbon markets after the shocks that broke public
-    trust, and a cheapest-to-deliver pricing framework explains why the price collapse was common to all three contracts.
-    It grew out of my MSc research project, which won the Best Research Project Prize.</p>
-  </div>
+        <article class="tile">
+          <div class="thumb ticker-thumb" aria-hidden="true"><svg viewBox="0 -10 600 320" preserveAspectRatio="xMidYMid slice"><rect x="0" y="-10" width="600" height="320" fill="#0b2440"/><g class="ticker">
+<path class="tk-price" d="M15,176 L45,162 L75,175 L105,171 L135,173 L165,175 L195,171 L225,154 L255,156 L285,147 L315,149 L345,151 L375,135 L405,202 L435,204 L465,200 L495,202 L525,224 L555,220 L585,222 L615,229 L645,225 L675,227 L705,229 L735,225 L765,208 L795,210 L825,198 L855,200 L885,202 L915,198 L945,200 L975,173 L1005,169 L1035,171 L1065,158 L1095,176 L1125,178 L1155,180 L1185,176"/>
+<path class="tk-floor" d="M0,183 L30,183 L30,167 L60,167 L60,178 L90,178 L90,178 L120,178 L120,178 L150,178 L150,178 L180,178 L180,178 L210,178 L210,159 L240,159 L240,159 L270,159 L270,154 L300,154 L300,154 L330,154 L330,154 L360,154 L360,142 L390,142 L390,207 L420,207 L420,207 L450,207 L450,207 L480,207 L480,207 L510,207 L510,227 L540,227 L540,227 L570,227 L570,227 L600,227 L600,232 L630,232 L630,232 L660,232 L660,232 L690,232 L690,232 L720,232 L720,232 L750,232 L750,213 L780,213 L780,213 L810,213 L810,205 L840,205 L840,205 L870,205 L870,205 L900,205 L900,205 L930,205 L930,205 L960,205 L960,176 L990,176 L990,176 L1020,176 L1020,176 L1050,176 L1050,161 L1080,161 L1080,183 L1110,183 L1110,183 L1140,183 L1140,183 L1170,183 L1170,183 L1200,183"/>
+<circle class="tk-dot" cx="15" cy="124" r="3.2"/>
+<text class="tk-id" x="15" y="115">ID 3812</text>
+<circle class="tk-dot" cx="45" cy="95" r="3.2"/>
+<circle class="tk-dot set" cx="75" cy="178" r="4.5"/>
+<text class="tk-id" x="75" y="169">ID 2555</text>
+<circle class="tk-dot" cx="105" cy="82" r="3.2"/>
+<text class="tk-id" x="105" y="73">ID 2135</text>
+<circle class="tk-dot" cx="135" cy="159" r="3.2"/>
+<circle class="tk-dot" cx="165" cy="131" r="3.2"/>
+<circle class="tk-dot" cx="195" cy="80" r="3.2"/>
+<text class="tk-id" x="195" y="71">ID 0770</text>
+<circle class="tk-dot" cx="225" cy="154" r="3.2"/>
+<circle class="tk-dot" cx="255" cy="76" r="3.2"/>
+<circle class="tk-dot" cx="285" cy="142" r="3.2"/>
+<text class="tk-id" x="285" y="133">ID 4402</text>
+<circle class="tk-dot" cx="315" cy="82" r="3.2"/>
+<circle class="tk-dot" cx="345" cy="85" r="3.2"/>
+<circle class="tk-dot" cx="375" cy="140" r="3.2"/>
+<text class="tk-id" x="375" y="131">ID 3776</text>
+<circle class="tk-dot set" cx="405" cy="207" r="4.5"/>
+<text class="tk-id" x="405" y="198">ID 2458</text>
+<circle class="tk-dot" cx="435" cy="91" r="3.2"/>
+<circle class="tk-dot" cx="465" cy="107" r="3.2"/>
+<text class="tk-id" x="465" y="98">ID 1067</text>
+<circle class="tk-dot" cx="495" cy="174" r="3.2"/>
+<circle class="tk-dot set" cx="525" cy="227" r="4.5"/>
+<text class="tk-id" x="525" y="218">ID 3525</text>
+<circle class="tk-dot" cx="555" cy="166" r="3.2"/>
+<text class="tk-id" x="555" y="157">ID 1451</text>
+<circle class="tk-dot" cx="585" cy="136" r="3.2"/>
+<circle class="tk-dot set" cx="615" cy="232" r="4.5"/>
+<text class="tk-id" x="615" y="223">ID 1345</text>
+<circle class="tk-dot" cx="645" cy="78" r="3.2"/>
+<text class="tk-id" x="645" y="69">ID 4105</text>
+<circle class="tk-dot" cx="675" cy="213" r="3.2"/>
+<circle class="tk-dot" cx="705" cy="118" r="3.2"/>
+<circle class="tk-dot" cx="735" cy="94" r="3.2"/>
+<text class="tk-id" x="735" y="85">ID 0735</text>
+<circle class="tk-dot" cx="765" cy="90" r="3.2"/>
+<circle class="tk-dot" cx="795" cy="121" r="3.2"/>
+<circle class="tk-dot set" cx="825" cy="205" r="4.5"/>
+<text class="tk-id" x="825" y="196">ID 2670</text>
+<circle class="tk-dot" cx="855" cy="100" r="3.2"/>
+<circle class="tk-dot" cx="885" cy="167" r="3.2"/>
+<circle class="tk-dot" cx="915" cy="176" r="3.2"/>
+<text class="tk-id" x="915" y="167">ID 4969</text>
+<circle class="tk-dot" cx="945" cy="132" r="3.2"/>
+<circle class="tk-dot" cx="975" cy="161" r="3.2"/>
+<circle class="tk-dot" cx="1005" cy="80" r="3.2"/>
+<text class="tk-id" x="1005" y="71">ID 3837</text>
+<circle class="tk-dot" cx="1035" cy="80" r="3.2"/>
+<circle class="tk-dot" cx="1065" cy="104" r="3.2"/>
+<circle class="tk-dot set" cx="1095" cy="183" r="4.5"/>
+<text class="tk-id" x="1095" y="174">ID 2311</text>
+<circle class="tk-dot" cx="1125" cy="141" r="3.2"/>
+<circle class="tk-dot" cx="1155" cy="122" r="3.2"/>
+<circle class="tk-dot" cx="1185" cy="167" r="3.2"/>
+<text class="tk-id" x="1185" y="158">ID 0597</text>
+<path class="tk-price" d="M1215,176 L1245,162 L1275,175 L1305,171 L1335,173 L1365,175 L1395,171 L1425,154 L1455,156 L1485,147 L1515,149 L1545,151 L1575,135 L1605,202 L1635,204 L1665,200 L1695,202 L1725,224 L1755,220 L1785,222 L1815,229 L1845,225 L1875,227 L1905,229 L1935,225 L1965,208 L1995,210 L2025,198 L2055,200 L2085,202 L2115,198 L2145,200 L2175,173 L2205,169 L2235,171 L2265,158 L2295,176 L2325,178 L2355,180 L2385,176"/>
+<path class="tk-floor" d="M1200,183 L1230,183 L1230,167 L1260,167 L1260,178 L1290,178 L1290,178 L1320,178 L1320,178 L1350,178 L1350,178 L1380,178 L1380,178 L1410,178 L1410,159 L1440,159 L1440,159 L1470,159 L1470,154 L1500,154 L1500,154 L1530,154 L1530,154 L1560,154 L1560,142 L1590,142 L1590,207 L1620,207 L1620,207 L1650,207 L1650,207 L1680,207 L1680,207 L1710,207 L1710,227 L1740,227 L1740,227 L1770,227 L1770,227 L1800,227 L1800,232 L1830,232 L1830,232 L1860,232 L1860,232 L1890,232 L1890,232 L1920,232 L1920,232 L1950,232 L1950,213 L1980,213 L1980,213 L2010,213 L2010,205 L2040,205 L2040,205 L2070,205 L2070,205 L2100,205 L2100,205 L2130,205 L2130,205 L2160,205 L2160,176 L2190,176 L2190,176 L2220,176 L2220,176 L2250,176 L2250,161 L2280,161 L2280,183 L2310,183 L2310,183 L2340,183 L2340,183 L2370,183 L2370,183 L2400,183"/>
+<circle class="tk-dot" cx="1215" cy="124" r="3.2"/>
+<text class="tk-id" x="1215" y="115">ID 3812</text>
+<circle class="tk-dot" cx="1245" cy="95" r="3.2"/>
+<circle class="tk-dot set" cx="1275" cy="178" r="4.5"/>
+<text class="tk-id" x="1275" y="169">ID 2555</text>
+<circle class="tk-dot" cx="1305" cy="82" r="3.2"/>
+<text class="tk-id" x="1305" y="73">ID 2135</text>
+<circle class="tk-dot" cx="1335" cy="159" r="3.2"/>
+<circle class="tk-dot" cx="1365" cy="131" r="3.2"/>
+<circle class="tk-dot" cx="1395" cy="80" r="3.2"/>
+<text class="tk-id" x="1395" y="71">ID 0770</text>
+<circle class="tk-dot" cx="1425" cy="154" r="3.2"/>
+<circle class="tk-dot" cx="1455" cy="76" r="3.2"/>
+<circle class="tk-dot" cx="1485" cy="142" r="3.2"/>
+<text class="tk-id" x="1485" y="133">ID 4402</text>
+<circle class="tk-dot" cx="1515" cy="82" r="3.2"/>
+<circle class="tk-dot" cx="1545" cy="85" r="3.2"/>
+<circle class="tk-dot" cx="1575" cy="140" r="3.2"/>
+<text class="tk-id" x="1575" y="131">ID 3776</text>
+<circle class="tk-dot set" cx="1605" cy="207" r="4.5"/>
+<text class="tk-id" x="1605" y="198">ID 2458</text>
+<circle class="tk-dot" cx="1635" cy="91" r="3.2"/>
+<circle class="tk-dot" cx="1665" cy="107" r="3.2"/>
+<text class="tk-id" x="1665" y="98">ID 1067</text>
+<circle class="tk-dot" cx="1695" cy="174" r="3.2"/>
+<circle class="tk-dot set" cx="1725" cy="227" r="4.5"/>
+<text class="tk-id" x="1725" y="218">ID 3525</text>
+<circle class="tk-dot" cx="1755" cy="166" r="3.2"/>
+<text class="tk-id" x="1755" y="157">ID 1451</text>
+<circle class="tk-dot" cx="1785" cy="136" r="3.2"/>
+<circle class="tk-dot set" cx="1815" cy="232" r="4.5"/>
+<text class="tk-id" x="1815" y="223">ID 1345</text>
+<circle class="tk-dot" cx="1845" cy="78" r="3.2"/>
+<text class="tk-id" x="1845" y="69">ID 4105</text>
+<circle class="tk-dot" cx="1875" cy="213" r="3.2"/>
+<circle class="tk-dot" cx="1905" cy="118" r="3.2"/>
+<circle class="tk-dot" cx="1935" cy="94" r="3.2"/>
+<text class="tk-id" x="1935" y="85">ID 0735</text>
+<circle class="tk-dot" cx="1965" cy="90" r="3.2"/>
+<circle class="tk-dot" cx="1995" cy="121" r="3.2"/>
+<circle class="tk-dot set" cx="2025" cy="205" r="4.5"/>
+<text class="tk-id" x="2025" y="196">ID 2670</text>
+<circle class="tk-dot" cx="2055" cy="100" r="3.2"/>
+<circle class="tk-dot" cx="2085" cy="167" r="3.2"/>
+<circle class="tk-dot" cx="2115" cy="176" r="3.2"/>
+<text class="tk-id" x="2115" y="167">ID 4969</text>
+<circle class="tk-dot" cx="2145" cy="132" r="3.2"/>
+<circle class="tk-dot" cx="2175" cy="161" r="3.2"/>
+<circle class="tk-dot" cx="2205" cy="80" r="3.2"/>
+<text class="tk-id" x="2205" y="71">ID 3837</text>
+<circle class="tk-dot" cx="2235" cy="80" r="3.2"/>
+<circle class="tk-dot" cx="2265" cy="104" r="3.2"/>
+<circle class="tk-dot set" cx="2295" cy="183" r="4.5"/>
+<text class="tk-id" x="2295" y="174">ID 2311</text>
+<circle class="tk-dot" cx="2325" cy="141" r="3.2"/>
+<circle class="tk-dot" cx="2355" cy="122" r="3.2"/>
+<circle class="tk-dot" cx="2385" cy="167" r="3.2"/>
+<text class="tk-id" x="2385" y="158">ID 0597</text>
+</g></svg></div>
+          <div class="tile-body">
+            <span class="label">Working Paper &middot; 2026</span>
+            <h3>Eligibility Design and Participation Exit in Carbon Offset Futures</h3>
+            <p>Why voluntary carbon offset futures fell to the cost of a credential once trust broke, and why the collapse
+            hit every contract. With Ying Liu.</p>
+            <a class="more" href="research/carbon-offset-futures.html">Read the Findings &rarr;</a>
+          </div>
+        </article>
 
-  <div class="item">
-    <div><span class="title">Analysis of Factors Driving Carbon Market Prices</span></div>
-    <div class="meta">BEc thesis, Shanghai University of Finance and Economics, 2024 &middot;
-    <a href="files/Meng_BEc_thesis_2024.pdf">PDF</a></div>
-    <p class="note">What drives allowance prices on China's regional and national carbon exchanges: market premium,
-    industry factors and energy prices.</p>
-  </div>
+        <article class="tile">
+          <div class="thumb" aria-hidden="true">
+            <svg viewBox="0 0 320 180">
+              <rect width="320" height="180" fill="#f1f5f9"/>
+              <g stroke="#dde3ea" stroke-width="1"><path d="M30,40 H300 M30,80 H300 M30,120 H300 M30,160 H300"/></g>
+              <path d="M30,120 L60,112 L90,118 L120,96 L150,104 L180,84 L210,92 L240,70 L270,78 L300,58" fill="none" stroke="#12406b" stroke-width="3" stroke-linejoin="round"/>
+              <path d="M30,140 L60,132 L90,138 L120,126 L150,132 L180,116 L210,124 L240,108 L270,114 L300,100" fill="none" stroke="#1b8a95" stroke-width="3" stroke-linejoin="round"/>
+              <path d="M30,100 L60,104 L90,92 L120,100 L150,86 L180,94 L210,80 L240,88 L270,72 L300,80" fill="none" stroke="#9aa9bb" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="6 5"/>
+            </svg>
+          </div>
+          <div class="tile-body">
+            <span class="label">BEc Thesis &middot; 2024</span>
+            <h3>Analysis of Factors Driving Carbon Market Prices</h3>
+            <p>What drives allowance prices on China's regional and national carbon exchanges: market premium, industry
+            factors and energy prices.</p>
+            <a class="more" href="files/Meng_BEc_thesis_2024.pdf">Read the Thesis (PDF) &rarr;</a>
+          </div>
+        </article>
 
-  <h2>Experience</h2>
+      </div>
+    </div>
+  </section>
 
-  <div class="item">
-    <div><span class="title">Teaching Assistant, Financial Engineering</span>, Imperial Business School</div>
-    <div class="meta">2025&ndash;26; reappointed for January 2027</div>
-    <p class="note">Tutorials and office hours on derivatives pricing: options, interest rate swaps and credit default swaps.</p>
-  </div>
+  <section class="band gray" id="projects">
+    <div class="wrap">
+      <div class="section-head"><div><h2>Projects</h2><p>Data, models and AI products built with others.</p></div></div>
+      <div class="cards3">
+        <article class="tile">
+          <div class="tile-body">
+            <span class="label">Supervision &middot; 2026</span>
+            <h3>Checking Corporate Emissions Reporting</h3>
+            <p>How far a company's reported greenhouse-gas figures can be traced back through their calculation basis
+            (warming-potential vintage, Scope 3 method, units). I supervised the interns who carried out this summer research
+            at the Centre for Climate Finance &amp; Investment; the results are in a dashboard for the project's stakeholders.</p>
+            <ul class="tags"><li>ESG Data</li><li>Emissions</li><li>Dashboard</li></ul>
+          </div>
+        </article>
+        <article class="tile">
+          <div class="tile-body">
+            <span class="label">Co-Founder &middot; BritxAI</span>
+            <h3>AI Wellness Companion for Sofiaa Health</h3>
+            <p>A retrieval-augmented LLM assistant that supports women through the midlife transition, built by BritxAI for
+            <a href="https://sofiaa.com">Sofiaa Health</a>, a start-up in the Oxford University Innovation incubator, and
+            deployed on Azure.</p>
+            <ul class="tags"><li>LLM</li><li>RAG</li><li>Azure</li></ul>
+          </div>
+        </article>
+        <article class="tile">
+          <div class="tile-body">
+            <span class="label">MSc Course Project &middot; 2025</span>
+            <h3>Stacked LightGBM for Quarter-Ahead Stock Returns</h3>
+            <p>A first LightGBM model predicts auxiliary targets from accounting, sector and earnings-surprise features; a
+            second predicts forward returns from them, with hyperparameters tuned by Optuna.</p>
+            <ul class="tags"><li>Python</li><li>LightGBM</li><li>Optuna</li></ul>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
 
-  <div class="item">
-    <div><span class="title">Research Assistant</span>, Centre for Climate Finance &amp; Investment, Imperial College London</div>
-    <div class="meta">February&ndash;October 2026 &middot; on the AI adoption project above</div>
-  </div>
+  <section class="band white" id="insights">
+    <div class="wrap">
+      <div class="section-head">
+        <div><h2>Insights</h2><p>Notes on doing research with AI, and news from the fields I work in.</p></div>
+        <a class="more" href="blog/">Visit the Blog &rarr;</a>
+      </div>
+      <div class="insights">
+        <div>
+          <h3 class="col-title">From the Blog</h3>
+          <ul class="mini-list">
+            <li><div class="src">Coming Soon</div><div class="t">Planning in VS Code Before Writing Code</div></li>
+            <li><div class="src">Coming Soon</div><div class="t">When to Deploy Agents</div></li>
+            <li><div class="src">Coming Soon</div><div class="t">Adversarial Tests: Making AI Check Its Own Work</div></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="col-title">In the News</h3>
+          <ul class="mini-list">
+            <li><div class="src">Verra &middot; 28 September 2026</div><a class="t" href="https://verra.org/verra-secures-icvcm-approval-for-carbon-capture-and-storage-methodology/">Verra Secures ICVCM Approval for Carbon Capture and Storage Methodology</a></li>
+            <li><div class="src">InsuranceIndustry.ai &middot; 23 October 2026</div><a class="t" href="https://insuranceindustry.ai/ai-insights-oct-23-2026/">NAIC Exposes Version 6.0 of Its AI Risk Evaluation Supplement</a></li>
+            <li><div class="src">Stanford SIEPR &middot; July 2026</div><a class="t" href="https://siepr.stanford.edu/publications/policy-brief/what-really-happening-jobs-separating-ai-hype-reality">What Is Really Happening to Jobs? Separating AI Hype from Reality</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <div class="item">
-    <div><span class="title">Market Risk Intern</span>, Bank of China (UK), London &middot; <span class="meta">2024&ndash;25</span></div>
-    <div><span class="title">Fixed Income Risk Intern</span>, Deloitte Risk Consulting, Shanghai &middot; <span class="meta">2024</span></div>
-  </div>
+  <section class="band gray" id="background">
+    <div class="wrap">
+      <div class="section-head"><div><h2>Background</h2></div></div>
+      <div class="background">
+        <div>
+          <h3 class="col">Experience</h3>
+          <ol class="timeline">
+            <li>
+              <div class="when">2025 &ndash; Now</div>
+              <div><span class="what">Teaching Assistant, Financial Engineering</span> &middot; <span class="where">Imperial Business School</span></div>
+              <p>Tutorials and office hours on derivatives pricing. Reappointed for January 2027.</p>
+            </li>
+            <li>
+              <div class="when">Feb &ndash; Oct 2026</div>
+              <div><span class="what">Research Assistant</span> &middot; <span class="where">Centre for Climate Finance &amp; Investment, Imperial College London</span></div>
+            </li>
+            <li class="minor">
+              <div class="when">2024 &ndash; 2025</div>
+              <div><span class="what">Market Risk Intern</span> &middot; <span class="where">Bank of China (UK), London</span></div>
+            </li>
+            <li class="minor">
+              <div class="when">2024</div>
+              <div><span class="what">Fixed Income Risk Intern</span> &middot; <span class="where">Deloitte Risk Consulting, Shanghai</span></div>
+            </li>
+          </ol>
+        </div>
+        <div>
+          <h3 class="col">Education</h3>
+          <ul class="edu-list">
+            <li><span class="what">MSc Risk Management and Financial Engineering</span>
+              <span class="meta">Imperial College London &middot; 2024&ndash;2025 &middot; Distinction &middot; Best Research Project Prize &middot; Financial Statistics Prize &middot; Dean's List</span></li>
+            <li><span class="what">BEc Finance</span>
+              <span class="meta">Shanghai University of Finance and Economics &middot; 2020&ndash;2024</span></li>
+            <li><span class="what">Financial Machine Learning Summer School</span>
+              <span class="meta">Yale School of Management &middot; 2025</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <h2>Projects</h2>
-
-  <div class="item">
-    <div><span class="title">Checking corporate emissions reporting</span></div>
-    <div class="meta">Summer research at the Centre for Climate Finance &amp; Investment &middot; I supervised the interns who carried it out &middot; 2026</div>
-    <p class="note">How far a company's reported greenhouse-gas figures can be traced back through their calculation basis
-    (warming-potential vintage, Scope 3 method, units), comparing several datasets built from the same company reports.
-    The results are delivered in a dashboard for the project's stakeholders.</p>
-  </div>
-
-  <div class="item">
-    <div><span class="title">Stacked LightGBM for quarter-ahead stock returns</span></div>
-    <div class="meta">MSc course project, Machine Learning and Finance &middot; 2025</div>
-    <p class="note">A first LightGBM model predicts auxiliary targets from accounting, sector and earnings-surprise features;
-    a second predicts forward returns from them, with hyperparameters tuned by Optuna.</p>
-  </div>
-
-  <div class="item">
-    <div><span class="title">AI wellness companion for Sofiaa Health</span></div>
-    <div class="meta">Built by BritxAI, which I co-founded, for <a href="https://sofiaa.com">Sofiaa Health</a>, a start-up in the Oxford University Innovation incubator</div>
-    <p class="note">A retrieval-augmented LLM assistant that supports women through the midlife transition; deployed on Azure.</p>
-  </div>
-
-  <h2>Education</h2>
-  <div class="item">
-    <div><span class="title">MSc Risk Management and Financial Engineering</span>, Imperial College London</div>
-    <div class="meta">2024&ndash;2025 &middot; Distinction &middot; Best Research Project Prize &middot; Financial Statistics Prize &middot; Dean's List</div>
-  </div>
-  <div class="item">
-    <div><span class="title">BEc Finance</span>, Shanghai University of Finance and Economics</div>
-    <div class="meta">2020&ndash;2024</div>
-  </div>
-  <div class="item">
-    <div><span class="title">Financial Machine Learning Summer School</span>, Yale School of Management</div>
-    <div class="meta">2025 &middot; Machine learning in asset pricing and portfolio choice</div>
-  </div>
-
-  <footer>Last updated November 2026</footer>
 </main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <p class="name">Xiangzhong (Shaun) Meng</p>
+        <p>London &middot; <a href="mailto:xiangzhong.meng@hotmail.com">xiangzhong.meng@hotmail.com</a></p>
+      </div>
+      <div>
+        <h4>Explore</h4>
+        <ul><li><a href="#research">Research</a></li><li><a href="#projects">Projects</a></li><li><a href="blog/">Blog</a></li></ul>
+      </div>
+      <div>
+        <h4>Elsewhere</h4>
+        <ul><li><a href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=6460979">SSRN</a></li><li><a href="https://www.linkedin.com/in/xiangzhong-meng/">LinkedIn</a></li><li><a href="https://github.com/xm0207">GitHub</a></li></ul>
+      </div>
+    </div>
+    <div class="legal">Last Updated November 2026</div>
+  </div>
+</footer>
+
 </body>
 </html>
