@@ -279,13 +279,14 @@ table.checks td:first-child { font-weight: 600; color: var(--ink); white-space: 
 
 
 
+
 /* thesis: China's regional pilot markets and the national market */
 .map-land { stroke-width: 0.8; stroke-linejoin: round; }
 .arc { fill: none; stroke: rgba(143, 227, 234, 0.32); stroke-width: 1.2; }
 .city { fill: #8fe3ea; }
 .nat-node { fill: #1b8a95; stroke: #bff6f8; stroke-width: 1.5; }
 .nat-ring { fill: none; stroke: #bff6f8; stroke-width: 2; }
-.ping { fill: none; stroke: #8fe3ea; stroke-width: 1.2; transform-box: fill-box; transform-origin: center; animation: ping 2.6s ease-out infinite; }
+.ping { fill: none; stroke: #8fe3ea; stroke-width: 1.2; transform-box: fill-box; transform-origin: center; animation: ping 1.8s ease-out infinite; }
 @keyframes ping { 0% { transform: scale(1); opacity: 0.85; } 100% { transform: scale(3.2); opacity: 0; } }
 .spark-core { fill: #ecfdff; }
 .spark-glow { fill: rgba(143, 227, 234, 0.32); }
@@ -467,15 +468,15 @@ table.checks td:first-child { font-weight: 600; color: var(--ink); white-space: 
 /* project covers drawn from each project's real content (make_covers.py) */
 .cards2 .thumb { aspect-ratio: 320 / 140; }
 .thumb.cover { background: #13202e; }
-.cv-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: cv-draw 9s ease-out infinite; }
+.cv-draw { stroke-dasharray: 1; stroke-dashoffset: 1; animation: cv-draw 5s ease-out infinite; }
 @keyframes cv-draw { 0% { stroke-dashoffset: 1; } 65%, 100% { stroke-dashoffset: 0; } }
-.cv-task { animation: cv-task 6s ease-in-out infinite; }
-.cv-task.d1 { animation-delay: -1.5s; } .cv-task.d2 { animation-delay: -3s; } .cv-task.d3 { animation-delay: -4.5s; }
+.cv-task { animation: cv-task 3.5s ease-in-out infinite; }
+.cv-task.d1 { animation-delay: -0.9s; } .cv-task.d2 { animation-delay: -1.8s; } .cv-task.d3 { animation-delay: -2.7s; }
 @keyframes cv-task { 0%, 15% { fill: #f0c9a0; } 40%, 85% { fill: #8fd3c7; } 100% { fill: #f0c9a0; } }
-.cv-check { opacity: 0; animation: cv-check 5s linear infinite; }
-.cv-check.c1 { animation-delay: 1.25s; } .cv-check.c2 { animation-delay: 2.5s; } .cv-check.c3 { animation-delay: 3.75s; } .cv-check.c4 { animation-delay: 5s; }
+.cv-check { opacity: 0; animation: cv-check 3s linear infinite; }
+.cv-check.c1 { animation-delay: 0.75s; } .cv-check.c2 { animation-delay: 1.5s; } .cv-check.c3 { animation-delay: 2.25s; } .cv-check.c4 { animation-delay: 3s; }
 @keyframes cv-check { 0% { opacity: 0; } 4%, 70% { opacity: 1; } 80%, 100% { opacity: 0; } }
-.cv-answer { animation: cv-answer 3s ease-in-out infinite; }
+.cv-answer { animation: cv-answer 2s ease-in-out infinite; }
 @keyframes cv-answer { 0%, 40% { opacity: 0.25; } 60%, 100% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) {
   .cv-draw { animation: none; stroke-dashoffset: 0; }
