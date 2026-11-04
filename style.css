@@ -501,3 +501,20 @@ table.checks td:first-child { font-weight: 600; color: var(--ink); white-space: 
 .cv-bar { transform-box: fill-box; transform-origin: left center; animation: cv-bar 3.5s ease-out infinite; }
 @keyframes cv-bar { 0% { transform: scaleX(0); } 35%, 100% { transform: scaleX(1); } }
 @media (prefers-reduced-motion: reduce) { .cv-bar { animation: none; } }
+
+/* top navigation: wordmark, links with an underline cue, round icon buttons */
+.topbar .mark { font: 700 1.08rem/1 var(--sans); letter-spacing: 0.01em; }
+.topbar nav { margin-left: auto; display: flex; align-items: center; }
+.topbar nav a { position: relative; padding: 6px 0; }
+.topbar nav a::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; border-radius: 1px;
+  background: var(--accent); transform: scaleX(0); transition: transform 0.2s ease; }
+.topbar nav a:hover::after, .topbar nav a[aria-current]::after { transform: scaleX(1); }
+.nav-icons { display: flex; gap: 8px; margin-left: 22px; padding-left: 22px; border-left: 1px solid #ddd2c0; }
+.nav-icons a { width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+  color: var(--ink); background: rgba(255, 253, 248, 0.9); border: 1px solid #ddd2c0; transition: background 0.15s, color 0.15s, border-color 0.15s; }
+.nav-icons a:hover { background: var(--accent); border-color: var(--accent); color: #fff; text-decoration: none; }
+.nav-icons svg { width: 17px; height: 17px; display: block; }
+@media (max-width: 720px) {
+  .nav-icons { margin-left: 12px; padding-left: 12px; gap: 6px; }
+  .nav-icons a { width: 30px; height: 30px; }
+}
