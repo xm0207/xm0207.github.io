@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
+<title>Single-Asset Risk by Ticker &middot; Xiangzhong (Shaun) Meng</title>
+<meta name="description" content="Four VaR models and historical stress tests run on ten stocks, ETFs and crude oil futures, ticker by ticker.">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="topbar">
+      <a class="mark" href="../">Shaun Meng</a>
+      <nav aria-label="Site">
+        <a class="keep" href="../">Home</a>
+        <a href="../#projects">Projects</a>
+        <a class="keep" href="../blog/">Blog</a>
+      </nav>
+    </div>
+    <div class="hero-body">
+      <p class="eyebrow">Project &middot; Open Source &middot; 2026</p>
+      <h1 class="statement">Single-Asset Risk by Ticker</h1>
+      <p class="role">The same four Value-at-Risk models and historical stress tests as the portfolio tools, run one asset at a
+      time on ten stocks, ETFs and crude oil futures.</p>
+      <div class="buttons">
+        <a class="btn primary" href="#ticker">Choose a Ticker</a>
+        <a class="btn" href="market-risk.html">Portfolio Tools</a>
+        <a class="btn" href="https://github.com/xm0207/market-risk-toolkit">View the Code on GitHub</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="band white">
+    <div class="wrap article">
+      <p class="lead">Each stock or ETF is a $1m position held at constant value. Each crude oil future is one contract of
+      1,000 barrels, so its P&amp;L is the change in price times 1,000. That way the analysis still works on 20 April 2020,
+      when WTI settled at &minus;$37.63 and percentage returns stop making sense.</p>
+      <p>The models are historical simulation, normal, EWMA and GARCH filtered historical simulation. Each forecasts
+      tomorrow from data up to today, over each asset's full history. The backtests are the same as in the portfolio tools:
+      Kupiec, Christoffersen, the Basel traffic light and an Expected Shortfall check.</p>
+    </div>
+  </section>
+
+  <section class="band gray" id="ticker">
+    <div class="wrap">
+      <div class="section-head"><div><h2>Results by Ticker</h2>
+        <p>Choose an asset. The headline figures use the filtered model; the table compares all four.</p></div></div>
+      <div class="tool">
+        <div class="ticker-groups" id="tk-groups" role="group" aria-label="Ticker"></div>
+        <div class="tk-head" aria-live="polite">
+          <h3 id="tk-title"></h3>
+          <p id="tk-sub"></p>
+        </div>
+        <div class="stats" id="tk-stats"></div>
+        <figure class="tk-figure">
+          <img id="tk-recent" alt="" width="900" height="360">
+          <figcaption id="tk-recent-cap"></figcaption>
+        </figure>
+        <div class="tool-controls" style="margin-top:22px">
+          <div class="seg" role="group" aria-label="Confidence level" id="tk-alpha">
+            <button type="button" data-value="0.99" aria-pressed="true">99%</button>
+            <button type="button" data-value="0.975" aria-pressed="false">97.5%</button>
+          </div>
+        </div>
+        <div class="scroll-x">
+          <table class="checks" id="tk-models">
+            <thead><tr><th>Model</th><th>Exceptions</th><th>Expected</th><th>Kupiec p</th><th>Independence p</th><th>ES ratio</th><th>Days in red zone</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <figure class="tk-figure">
+          <img id="tk-years" alt="" loading="lazy">
+          <figcaption>Exceptions per calendar year at 99%, for each model, against the number expected.</figcaption>
+        </figure>
+        <h3 class="tk-sub-h">Historical Stress Scenarios</h3>
+        <div class="scroll-x">
+          <table class="checks" id="tk-stress">
+            <thead><tr><th>Scenario</th><th>Window</th><th>P&amp;L</th><th>&times; today&rsquo;s 99% VaR</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="tool-note" id="tk-notes"></p>
+        <p class="tool-note"><a id="tk-full" href="#">See the full-history backtest chart for all four models &rarr;</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band white">
+    <div class="wrap article">
+      <h2>Data and Caveats</h2>
+      <ul>
+        <li>Prices are daily closes from Yahoo Finance via the yfinance library, adjusted for splits and dividends. Yahoo data
+        is for personal use, so this page shows results only: no price or return series are published.</li>
+        <li>The crude oil series are Yahoo&rsquo;s continuous front-month contracts. They are spliced without back-adjustment,
+        so each roll day adds an artificial price jump to the P&amp;L.</li>
+        <li>Positions are hypothetical and held at constant size, so the backtests judge the models rather than any trading.</li>
+        <li>Stress scenarios apply each window&rsquo;s move to the position at once, and only windows inside the asset&rsquo;s
+        history are shown.</li>
+      </ul>
+      <p>Any ticker can be run locally with <code>scripts/analyze_ticker.py</code> in the
+      <a href="https://github.com/xm0207/market-risk-toolkit">repository</a>.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="legal"><a href="../">Xiangzhong (Shaun) Meng</a> &middot; <a href="mailto:xiangzhong.meng@hotmail.com">xiangzhong.meng@hotmail.com</a> &middot; Last Updated November 2026</div>
+  </div>
+</footer>
+
+<script src="ticker-risk.js" defer></script>
+</body>
+</html>
