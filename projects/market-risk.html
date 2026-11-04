@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
+<title>Stress Testing and Market Risk &middot; Xiangzhong (Shaun) Meng</title>
+<meta name="description" content="Four VaR models backtested on 35 years of daily data and seven historical crises replayed on a sterling multi-asset portfolio, with an interactive backtest explorer and stress calculator.">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="topbar">
+      <a class="mark" href="../">Shaun Meng</a>
+      <nav aria-label="Site">
+        <a class="keep" href="../">Home</a>
+        <a href="../#research">Research</a>
+        <a href="../#projects">Projects</a>
+        <a class="keep" href="../blog/">Blog</a>
+      </nav>
+    </div>
+    <div class="hero-body">
+      <p class="eyebrow">Project &middot; Open Source &middot; 2026</p>
+      <h1 class="statement">Stress Testing and Market Risk</h1>
+      <p class="role">Four Value-at-Risk models backtested on 35 years of daily data, and seven historical crises replayed on
+      today's portfolio. Everything here runs on public data and open-source Python.</p>
+      <div class="buttons">
+        <a class="btn primary" href="https://github.com/xm0207/market-risk-toolkit">View the Code on GitHub</a>
+        <a class="btn" href="#explorer">Backtest Explorer</a>
+        <a class="btn" href="#stress">Stress Calculator</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="band white">
+    <div class="wrap article">
+      <p class="lead">A sterling investor holds &pound;10m of US equities, Treasuries, corporate bonds and oil. How much could
+      the portfolio lose tomorrow, and how would it fare in a repeat of 2008? The project answers both questions with four
+      VaR models, formal backtests over 8,912 trading days and seven historical stress scenarios.</p>
+
+      <h2>The Portfolio</h2>
+      <p>Every position is held at a constant value in sterling and rebalanced daily, so the book carries equity, rates,
+      credit, commodity and currency risk at the same time.</p>
+      <div class="scroll-x">
+        <table class="checks">
+          <thead><tr><th>Position</th><th>Value</th><th>Data</th><th>How It Is Priced</th></tr></thead>
+          <tbody>
+            <tr><td>US equities</td><td>&pound;4m</td><td>NASDAQ Composite</td><td>Change in the index level</td></tr>
+            <tr><td>US 10-year Treasury</td><td>&pound;3m</td><td>10-year constant-maturity yield</td><td>A par bond repriced from the yield each day, plus accrued coupon</td></tr>
+            <tr><td>US Baa corporate bonds</td><td>&pound;2m</td><td>Moody's seasoned Baa yield</td><td>The same, with a 20-year maturity</td></tr>
+            <tr><td>Brent crude</td><td>&pound;1m</td><td>Brent spot price</td><td>Change in the price</td></tr>
+            <tr><td>Currency</td><td></td><td>US dollars per pound</td><td>Every position is converted from dollars to sterling</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>Data</h2>
+      <p>The data are five daily series from FRED, the Federal Reserve Bank of St. Louis database, running from May 1987 to
+      October 2026. They are stored in a DuckDB database and queried with SQL. The series do not share a calendar: Brent
+      prices are missing on 986 of 9,941 NASDAQ trading days. Keeping only the dates on which every series has data would
+      silently turn some one-day returns into returns over a week. The data layer therefore uses NASDAQ trading days as the
+      calendar and carries the other series forward over at most five missing days.</p>
+
+      <h2>Methods</h2>
+      <div class="scroll-x">
+        <table class="checks">
+          <thead><tr><th>Model</th><th>Window</th><th>Idea</th></tr></thead>
+          <tbody>
+            <tr><td>Historical simulation</td><td>500 days</td><td>Tomorrow looks like a random day from the last two years</td></tr>
+            <tr><td>Normal</td><td>500 days</td><td>A normal distribution with the window's mean and volatility</td></tr>
+            <tr><td>EWMA (RiskMetrics)</td><td>500 days, &lambda; = 0.94</td><td>Recent days weigh more, so volatility reacts within days</td></tr>
+            <tr><td>Filtered historical simulation</td><td>1,000 days</td><td>GARCH(1,1) volatility rescales past shocks to tomorrow's conditions, keeping their fat tails</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Each model forecasts tomorrow's VaR and Expected Shortfall at 99% and 97.5% using only data up to today. The
+      forecasts are then judged against what happened:</p>
+      <ul>
+        <li><strong>Kupiec test:</strong> is the share of exceptions equal to 1% (or 2.5%)?</li>
+        <li><strong>Christoffersen test:</strong> are exceptions independent of each other, or do they cluster?</li>
+        <li><strong>Basel traffic light:</strong> how many exceptions fell in the trailing 250 days (green 0&ndash;4, yellow 5&ndash;9, red 10 or more)?</li>
+        <li><strong>ES ratio:</strong> on exception days, how did the actual loss compare with the forecast Expected Shortfall?</li>
+      </ul>
+      <p>The code is a Python package with an object-oriented design. Every VaR model inherits from one abstract base class,
+      every instrument from a <code>Position</code> class, and every stress shock from a <code>Shock</code> class, so a new
+      model or instrument plugs into the backtester without changing it. The package has 38 unit tests, run by GitHub Actions
+      on every push. This page is plain JavaScript reading a JSON file that the package exports.</p>
+    </div>
+  </section>
+
+  <section class="band gray" id="explorer">
+    <div class="wrap">
+      <div class="section-head"><div><h2>Backtest Explorer</h2>
+        <p>Choose a model, a confidence level and a period. The statistics below the chart are recomputed for the period
+        shown.</p></div></div>
+      <div class="tool" data-tool="explorer">
+        <div class="tool-controls">
+          <div class="seg" role="group" aria-label="Model" data-control="model"></div>
+          <div class="seg" role="group" aria-label="Confidence level" data-control="alpha">
+            <button type="button" data-value="99" aria-pressed="true">99%</button>
+            <button type="button" data-value="975" aria-pressed="false">97.5%</button>
+          </div>
+          <div class="seg" role="group" aria-label="Period" data-control="period">
+            <button type="button" data-value="all" aria-pressed="true">1991&ndash;2026</button>
+            <button type="button" data-value="gfc" aria-pressed="false">2007&ndash;09</button>
+            <button type="button" data-value="y2020" aria-pressed="false">2020</button>
+            <button type="button" data-value="y2022" aria-pressed="false">2022</button>
+            <button type="button" data-value="last2" aria-pressed="false">Last 2 Years</button>
+          </div>
+        </div>
+        <canvas class="chart" id="bt-canvas" role="img" aria-label="Daily P&amp;L against the VaR forecast, with exceptions marked"></canvas>
+        <canvas class="strip" id="bt-strip" role="img" aria-label="Basel traffic-light zone on each day"></canvas>
+        <div class="legend">
+          <span><i class="key key-pnl"></i>Daily P&amp;L</span>
+          <span><i class="key key-var"></i>Minus the VaR forecast made the day before</span>
+          <span><i class="key key-exc"></i>Exception</span>
+          <span class="strip-key"><i class="key key-green"></i><i class="key key-yellow"></i><i class="key key-red"></i>Basel zone, trailing 250 days (99% only)</span>
+        </div>
+        <div class="stats" id="bt-stats" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band white" id="stress">
+    <div class="wrap">
+      <div class="section-head"><div><h2>Stress Calculator</h2>
+        <p>Start from a historical crisis or move the sliders. The portfolio is revalued at once: bonds are fully repriced from
+        their yields and every position is converted to sterling.</p></div></div>
+      <div class="tool" data-tool="stress">
+        <div class="presets" id="st-presets" role="group" aria-label="Historical scenarios"></div>
+        <div class="stress-grid">
+          <div class="sliders" id="st-sliders"></div>
+          <div class="stress-out" aria-live="polite">
+            <div class="total-label" id="st-title">Your scenario</div>
+            <div class="total" id="st-total"></div>
+            <div class="total-note" id="st-note"></div>
+            <div class="bars" id="st-bars"></div>
+          </div>
+        </div>
+        <p class="tool-note" id="st-foot"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band gray">
+    <div class="wrap article">
+      <h2>What It Shows</h2>
+      <ul>
+        <li><strong>No model passes at 99%.</strong> All four have 30&ndash;50% more exceptions than expected, and the
+        exceptions cluster. The portfolio's tails are fatter, and its volatility more persistent, than any model assumes.</li>
+        <li><strong>The filtered model is the best calibrated.</strong> Its Expected Shortfall is right on average (an ES ratio of
+        1.00), and at 97.5%, the confidence level of the Basel FRTB Expected Shortfall, it has 221 exceptions against 222.8 expected.</li>
+        <li><strong>Historical simulation is slow to react.</strong> In 2008 it had 15 exceptions at 99%, against 7 for the
+        filtered model, because its two-year window still held the calm of 2006&ndash;07.</li>
+        <li><strong>A falling pound is a hedge for this portfolio.</strong> In 2022 US 10-year yields rose by 248 basis points,
+        yet the Treasury position lost almost nothing in sterling, because the pound fell 17% against the dollar. In the UK
+        mini-budget of September 2022 the portfolio gained.</li>
+        <li><strong>A repeat of 2008 would cost seven days of VaR.</strong> Replayed on today's portfolio, the Lehman month
+        loses &pound;1.2m, 7.0 times today's one-day 99% VaR.</li>
+      </ul>
+
+      <h2>Limitations</h2>
+      <ul>
+        <li>The P&amp;L is hypothetical: values are held constant, so the backtest judges the models, not trading decisions.</li>
+        <li>Bond returns come from constant-maturity yields; the Baa yield averages bonds of 20 years and longer.</li>
+        <li>Equities and oil use spot data, with no dividends, futures roll or funding cost.</li>
+        <li>Stress scenarios apply a whole window's moves at once, with no rebalancing or liquidity cost along the way.</li>
+      </ul>
+      <p>The code, tests and full write-up are on
+      <a href="https://github.com/xm0207/market-risk-toolkit">GitHub</a>.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="legal"><a href="../">Xiangzhong (Shaun) Meng</a> &middot; <a href="mailto:xiangzhong.meng@hotmail.com">xiangzhong.meng@hotmail.com</a> &middot; Last Updated November 2026</div>
+  </div>
+</footer>
+
+<script src="market-risk.js" defer></script>
+</body>
+</html>
