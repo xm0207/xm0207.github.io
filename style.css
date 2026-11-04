@@ -326,6 +326,7 @@ table.checks td:first-child { font-weight: 600; color: var(--ink); white-space: 
 
 /* projects: two columns */
 .cards2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+.cards2.follow { margin-top: 22px; }
 
 /* home page: a separate, narrower left panel (profile and background) beside the whole page */
 .side-panel { position: fixed; top: 0; left: 0; bottom: 0; width: 280px; overflow-y: auto; z-index: 10;
