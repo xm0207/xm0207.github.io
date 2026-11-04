@@ -3,8 +3,15 @@
 (function () {
   'use strict';
 
-  var COLORS = { pnl: '#b9c4d2', varLine: '#12406b', exc: '#c0392b', grid: '#e6e9ef', axis: '#6b7686',
-    green: '#2fbf8f', yellow: '#f2b84b', red: '#e05a4f', gain: '#1b8a95', loss: '#c0392b' };
+  // chart colours come from the page's CSS variables, so the charts follow the site theme
+  var COLORS = {};
+  function readColors() {
+    var cs = getComputedStyle(document.documentElement);
+    function v(name, fallback) { return cs.getPropertyValue(name).trim() || fallback; }
+    COLORS = { pnl: v('--chart-pnl', '#b9c4d2'), varLine: v('--chart-var', '#12406b'), exc: v('--chart-exc', '#c0392b'),
+      zero: v('--chart-zero', '#9aa9bb'), grid: v('--line', '#e6e9ef'), axis: v('--muted', '#6b7686'),
+      green: v('--zone-green', '#2fbf8f'), yellow: v('--zone-yellow', '#f2b84b'), red: v('--zone-red', '#e05a4f') };
+  }
   var MODEL_LABELS = { 'Historical simulation': 'Historical', 'Normal': 'Normal', 'EWMA normal': 'EWMA',
     'Filtered HS (GARCH)': 'Filtered HS' };
   var DAY = 864e5;
@@ -144,7 +151,7 @@
       ctx.beginPath();
       for (i = i0; i <= i1; i++) { var x = X(i); ctx.moveTo(x, y0); ctx.lineTo(x, Y(bt.pnl[i])); }
       ctx.stroke();
-      ctx.strokeStyle = '#9aa9bb'; ctx.lineWidth = 1;
+      ctx.strokeStyle = COLORS.zero; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.moveTo(pad.l, Math.round(y0) + 0.5); ctx.lineTo(w - pad.r, Math.round(y0) + 0.5); ctx.stroke();
 
       // minus VaR
@@ -164,7 +171,7 @@
     function drawStrip(i0, i1, m) {
       var c = setup($('bt-strip')), ctx = c.ctx, w = c.w, h = c.h, padL = 58, padR = 10;
       if (state.alpha !== '99') {
-        ctx.fillStyle = '#f0f2f5'; ctx.fillRect(padL, 0, w - padL - padR, h);
+        ctx.fillStyle = COLORS.grid; ctx.fillRect(padL, 0, w - padL - padR, h);
         return;
       }
       var t0 = dates[i0], t1 = dates[i1];
@@ -358,7 +365,7 @@
 
   fetch('data/market-risk.json')
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
-    .then(function (data) { initExplorer(data); initStress(data); })
+    .then(function (data) { readColors(); initExplorer(data); initStress(data); })
     .catch(function () {
       document.querySelectorAll('.tool').forEach(function (el) {
         el.insertAdjacentHTML('beforeend', '<p class="tool-note">The data for this tool could not be loaded.</p>');
