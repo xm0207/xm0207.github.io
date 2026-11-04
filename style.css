@@ -327,34 +327,26 @@ table.checks td:first-child { font-weight: 600; color: var(--ink); white-space: 
 /* projects: two columns */
 .cards2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
 
-/* home page: profile and background in a left sidebar, the main sections on the right */
-.wrap.wide { max-width: 1200px; }
-.layout { display: grid; grid-template-columns: 280px minmax(0, 1fr); padding-top: 56px; padding-bottom: 64px; }
-.sidebar { padding-right: 32px; border-right: 2px solid var(--line); align-self: start; }
-.main-col { padding-left: 44px; min-width: 0; }
-.sec { padding: 0 0 52px; scroll-margin-top: 24px; }
-.sec + .sec { border-top: 1px solid var(--line); padding-top: 44px; }
-.profile .monogram { width: 64px; height: 64px; border-radius: 50%; background: var(--accent); color: #fff;
-  display: flex; align-items: center; justify-content: center; font: 700 1.3rem/1 var(--sans); letter-spacing: 0.04em; margin: 0 0 16px; }
-.profile .name { font: 700 1.15rem/1.3 var(--sans); color: var(--ink); margin: 0 0 4px; }
-.profile .role { color: var(--body); margin: 0 0 2px; font-size: 0.95rem; }
-.profile .place { color: var(--muted); margin: 0 0 14px; font-size: 0.9rem; }
-.profile dl { margin: 0 0 16px; }
-.profile dt, .sidebar h3.col { font: 600 0.72rem/1 var(--sans); letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 16px 0 8px; }
-.profile dd { margin: 0; font-size: 0.92rem; }
-.profile .links { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.92rem; }
-.side-block { border-top: 1px solid var(--line); margin-top: 22px; padding-top: 4px; }
-.sidebar .timeline { padding-left: 14px; }
-.sidebar .timeline li { padding: 0 0 16px 14px; font-size: 0.9rem; line-height: 1.5; }
-.sidebar .timeline p { font-size: 0.86rem; color: var(--muted); }
-.sidebar .when { font-size: 0.74rem; }
-.sidebar .edu-list li { padding: 0 0 12px; font-size: 0.9rem; line-height: 1.5; }
-.sidebar .edu-list .meta { font-size: 0.84rem; }
-/* research tiles read as rows in the narrower main column */
-.main-col .cards3 { grid-template-columns: 1fr; gap: 16px; }
-.main-col .cards3 .tile { flex-direction: row; }
-.main-col .cards3 .thumb { flex: 0 0 240px; aspect-ratio: auto; min-height: 150px; }
-.main-col .cards3 .tile:hover { transform: translateY(-2px); }
+/* home page: a separate, narrower left panel (profile and background) beside the whole page */
+.side-panel { position: fixed; top: 0; left: 0; bottom: 0; width: 280px; overflow-y: auto; z-index: 10;
+  background: #ece4d6; border-right: 1px solid #ddd2c0; padding: 34px 26px 40px; }
+.page-main { margin-left: 280px; }
+.profile .monogram { width: 60px; height: 60px; border-radius: 50%; background: var(--accent); color: #fff;
+  display: flex; align-items: center; justify-content: center; font: 700 1.2rem/1 var(--sans); letter-spacing: 0.04em; margin: 0 0 14px; }
+.profile .name { font: 700 1.1rem/1.3 var(--sans); color: var(--ink); margin: 0 0 4px; }
+.profile .role { color: var(--body); margin: 0 0 2px; font-size: 0.92rem; }
+.profile .place { color: var(--muted); margin: 0 0 12px; font-size: 0.88rem; }
+.profile dl { margin: 0 0 14px; }
+.profile dt, .side-panel h3.col { font: 600 0.7rem/1 var(--sans); letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin: 14px 0 7px; }
+.profile dd { margin: 0; font-size: 0.88rem; line-height: 1.5; }
+.profile .links { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 0.88rem; }
+.side-block { border-top: 1px solid #d9cdb9; margin-top: 20px; padding-top: 2px; }
+.side-panel .timeline { padding-left: 12px; border-left-color: #d9cdb9; }
+.side-panel .timeline li { padding: 0 0 14px 12px; font-size: 0.86rem; line-height: 1.45; }
+.side-panel .timeline p { font-size: 0.82rem; color: var(--muted); margin-top: 2px; }
+.side-panel .when { font-size: 0.7rem; }
+.side-panel .edu-list li { padding: 0 0 10px; font-size: 0.86rem; line-height: 1.45; }
+.side-panel .edu-list .meta { font-size: 0.8rem; }
 
 /* interactive tools (projects/market-risk.html); chart colours follow the theme */
 :root { --chart-pnl: #cdc4b6; --chart-var: #1f1e1d; --chart-exc: #b83d2e; --chart-zero: #a39b8f;
@@ -419,18 +411,19 @@ table.checks td:first-child { font-weight: 600; color: var(--ink); white-space: 
 .article code { font-size: 0.88em; background: rgba(31, 30, 29, 0.06); padding: 1px 5px; border-radius: 4px; }
 
 @media (max-width: 900px) {
-  .layout { grid-template-columns: minmax(0, 1fr); padding-top: 36px; }
-  .sidebar { padding: 0 0 24px; border-right: 0; border-bottom: 2px solid var(--line); margin-bottom: 36px; }
-  .main-col { padding-left: 0; }
   .stress-grid { grid-template-columns: 1fr; }
   .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 @media (max-width: 720px) {
   .cards2 { grid-template-columns: 1fr; }
-  .main-col .cards3 .tile { flex-direction: column; }
-  .main-col .cards3 .thumb { flex: none; aspect-ratio: 16 / 9; min-height: 0; }
   .legend { margin-left: 0; }
   .tool canvas.chart { height: 280px; }
   .bars .row { grid-template-columns: 96px minmax(0, 1fr) 84px; }
   .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* below 1100px the left panel stops being fixed and sits above the page */
+@media (max-width: 1100px) {
+  .side-panel { position: static; width: auto; border-right: 0; border-bottom: 1px solid #ddd2c0; padding: 28px 28px 24px; }
+  .page-main { margin-left: 0; }
 }
