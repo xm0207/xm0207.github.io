@@ -453,3 +453,11 @@ table.checks td:first-child { font-weight: 600; color: var(--ink); white-space: 
 .hero.scene .btn { background: rgba(255, 253, 248, 0.92); }
 .hero.scene .btn.primary { background: var(--accent); }
 .hero.scene .chips li { background: rgba(255, 249, 242, 0.92); }
+.sc-float { animation: sc-float 4s ease-in-out infinite alternate; }
+.sc-float.f2 { animation-delay: -2s; }
+@keyframes sc-float { from { transform: translateY(0); } to { transform: translateY(-4px); } }
+/* oxygen from the plant reads green; emissions stay grey */
+.hero-scene .o2 circle { fill: rgba(106, 174, 134, 0.18); stroke: #3f7f5e; stroke-width: 1.2; }
+.hero-scene .o2 text { fill: #2f6b4b; font-size: 10px; font-weight: 700; }
+.sc-gas circle { fill: rgba(111, 102, 92, 0.08); stroke: rgba(111, 102, 92, 0.55); }
+.sc-gas text { fill: #5e5a54; }
