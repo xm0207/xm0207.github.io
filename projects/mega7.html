@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light only">
+<title>Decomposing the Magnificent Seven &middot; Xiangzhong (Shaun) Meng</title>
+<meta name="description" content="Risk, correlation, joint tail moves and index concentration of Apple, Microsoft, Alphabet, Amazon, Nvidia, Meta and Tesla since May 2012, with an event study of Nvidia's November 2026 sell-off.">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="topbar">
+      <a class="mark" href="../">Shaun Meng</a>
+      <nav aria-label="Site">
+        <a class="keep" href="../">Home</a>
+        <a href="../#projects">Projects</a>
+        <a class="keep" href="../blog/">Blog</a>
+      </nav>
+      <div class="nav-icons">
+        <a href="mailto:xiangzhong.meng@hotmail.com" aria-label="Email" title="Email"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="6" width="17" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4 7l8 6 8-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg></a>
+        <a href="https://www.linkedin.com/in/xiangzhong-meng/" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5.3 9h2.9v9.5H5.3zM6.75 4.5a1.7 1.7 0 1 1 0 3.4 1.7 1.7 0 0 1 0-3.4zM10.1 9h2.8v1.3h.04c.39-.74 1.34-1.52 2.77-1.52 2.96 0 3.5 1.95 3.5 4.48v5.24h-2.9v-4.65c0-1.11-.02-2.54-1.55-2.54-1.55 0-1.79 1.21-1.79 2.46v4.73h-2.9z"/></svg></a>
+        <a href="https://github.com/xm0207" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.5a9.5 9.5 0 0 0-3 18.52c.48.09.65-.2.65-.46v-1.6c-2.64.57-3.2-1.27-3.2-1.27-.43-1.1-1.06-1.39-1.06-1.39-.86-.59.07-.58.07-.58.95.07 1.45.98 1.45.98.85 1.45 2.22 1.03 2.76.79.09-.61.33-1.03.6-1.27-2.11-.24-4.33-1.05-4.33-4.7 0-1.04.37-1.89.98-2.55-.1-.24-.42-1.21.09-2.52 0 0 .8-.26 2.61.97a9.04 9.04 0 0 1 4.75 0c1.81-1.23 2.61-.97 2.61-.97.51 1.31.19 2.28.09 2.52.61.66.98 1.51.98 2.55 0 3.66-2.23 4.46-4.35 4.7.34.29.65.87.65 1.76v2.61c0 .26.17.56.66.46A9.5 9.5 0 0 0 12 2.5z"/></svg></a>
+      </div>
+    </div>
+    <div class="hero-body">
+      <p class="eyebrow">Project &middot; Open Source &middot; 2026</p>
+      <h1 class="statement">Decomposing the Magnificent Seven</h1>
+      <p class="role">Return, risk, co-movement and index concentration of Apple, Microsoft, Alphabet, Amazon, Nvidia, Meta and
+      Tesla since May 2012, with an event study of Nvidia&rsquo;s November 2026 sell-off.</p>
+      <div class="buttons">
+        <a class="btn primary" href="#dashboard">Explore the Dashboard</a>
+        <a class="btn" href="https://github.com/xm0207/mega7-decomposition">View the Code on GitHub</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="band white">
+    <div class="wrap article">
+      <p class="lead">The study takes apart the seven large US stocks often called the Magnificent Seven over their common
+      sample, 21 May 2012 to 10 November 2026: how each one&rsquo;s return compares with its risk, how closely the seven move
+      together over time and in the tails, how much of the S&amp;P 500&rsquo;s variance they explain, and how Nvidia&rsquo;s
+      November 2026 sell-off splits into market, sector and company-specific parts.</p>
+      <p>Prices come from Yahoo Finance and are not redistributed, so this page shows summary statistics only: the metrics,
+      correlation matrices, month-end rolling statistics and event-day figures that the repository publishes in
+      <code>results/</code>. The sample is chosen with hindsight. These seven were picked because they became the largest US
+      companies, so their high returns, Sharpe ratios and alphas describe what happened to seven survivors, and say nothing
+      about a strategy anyone could have followed in 2012.</p>
+    </div>
+  </section>
+
+  <section class="band gray" id="dashboard">
+    <div class="wrap">
+      <div class="section-head"><div><h2>Risk and Return</h2>
+        <p>Only Nvidia stands out on a risk-adjusted basis: its Sharpe ratio is 1.17, against 0.81 for SPY, and five of the
+        seven are within 0.1 of SPY. The equal-weight basket&rsquo;s Sharpe ratio, 1.21, is higher than any single
+        stock&rsquo;s, because the seven&rsquo;s average pairwise correlation is only 0.46.</p></div></div>
+      <div class="tool">
+        <div class="ticker-groups"><div class="ticker-group"><span>Sort by</span>
+          <div class="presets" id="rk-sort" role="group" aria-label="Sort by">
+            <button type="button" data-value="sharpe" aria-pressed="true">Sharpe ratio</button>
+            <button type="button" data-value="volatility" aria-pressed="false">Volatility</button>
+            <button type="button" data-value="max_drawdown" aria-pressed="false">Max drawdown</button>
+            <button type="button" data-value="beta" aria-pressed="false">Beta to SPY</button>
+          </div></div></div>
+        <div class="m7-chart" id="rk-chart"></div>
+        <div class="m7-legend" id="rk-legend"></div>
+        <div class="scroll-x" style="margin-top:18px">
+          <table class="checks m7-table" id="rk-table">
+            <thead><tr>
+              <th>Ticker</th>
+              <th class="m7-num">Ann. return</th>
+              <th class="m7-num" data-key="volatility"><button type="button" class="m7-sort" data-value="volatility">Volatility</button></th>
+              <th class="m7-num" data-key="sharpe"><button type="button" class="m7-sort" data-value="sharpe">Sharpe</button></th>
+              <th class="m7-num" data-key="max_drawdown"><button type="button" class="m7-sort" data-value="max_drawdown">Max drawdown</button></th>
+              <th class="m7-num" data-key="beta"><button type="button" class="m7-sort" data-value="beta">Beta to SPY</button></th>
+              <th class="m7-num">Alpha a year (t)</th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="tool-note">* The basket&rsquo;s alpha of 15.8% a year (t = 4.2), like Nvidia&rsquo;s 31.8% (t = 2.8),
+        reflects hindsight in choosing the seven: these are the alphas of stocks picked for having done well, so they are not
+        evidence of a strategy anyone could have run.</p>
+        <p class="tool-note">Daily returns, 21 May 2012 to 10 November 2026. Annualised return is compound growth; volatility
+        is the daily standard deviation &times; &radic;252; beta is from daily returns. The basket holds the seven in equal
+        weights, rebalanced at each month end, with no costs. Alpha is from monthly regressions on the Fama&ndash;French five
+        factors and momentum, June 2012 to September 2026, with Newey&ndash;West t-statistics in brackets.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band white" id="rolling">
+    <div class="wrap">
+      <div class="section-head"><div><h2>Correlation Over Time</h2>
+        <p>How much the seven trade as one varies a lot over time and is low now. The one-year average pairwise correlation
+        ranged from 0.16 (December 2013) to 0.68 (July 2020) at month ends, and is 0.26 on 10 November 2026. Its fall from 0.50
+        at the end of March 2026 to 0.31 at the end of April is largely a window effect: 9 April 2025, when SPY rose 10.5%,
+        left the window on 13 April 2026.</p></div></div>
+      <div class="tool">
+        <div class="ticker-groups"><div class="ticker-group"><span>Series</span>
+          <div class="presets" id="rc-series" role="group" aria-label="Series"></div></div></div>
+        <div class="m7-chart" id="rc-chart"></div>
+        <div class="m7-legend" id="rc-legend"></div>
+        <p class="m7-summary" id="rc-summary" aria-live="polite"></p>
+        <p class="tool-note">Correlations over the trailing 252 trading days, sampled at each month end from May 2013, the
+        first full window, to 10 November 2026. Correlations between pairs of the seven are published over time only as their
+        average, so the single-pair view shows each stock against SPY.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band gray" id="matrix">
+    <div class="wrap">
+      <div class="section-head"><div><h2>Correlation Matrix</h2>
+        <p>Correlations are lower at longer horizons: the average of the 21 pairs is 0.46 daily, 0.42 weekly and 0.40 monthly.
+        After the Fama&ndash;French five factors and momentum are removed, the average residual correlation is 0.04. Only
+        GOOGL&ndash;AMZN (0.20), GOOGL&ndash;META (0.16) and AMZN&ndash;META (0.16) remain above 0.1.</p></div></div>
+      <div class="tool">
+        <div class="ticker-groups"><div class="ticker-group"><span>Returns</span>
+          <div class="presets" id="cm-view" role="group" aria-label="Returns">
+            <button type="button" data-value="daily" aria-pressed="true">Daily</button>
+            <button type="button" data-value="weekly" aria-pressed="false">Weekly</button>
+            <button type="button" data-value="monthly" aria-pressed="false">Monthly</button>
+            <button type="button" data-value="resid_spy" aria-pressed="false">Daily, beyond SPY</button>
+            <button type="button" data-value="resid_ff6" aria-pressed="false">Daily, beyond six factors</button>
+          </div></div></div>
+        <div class="m7-chart" id="cm-chart"></div>
+        <div class="stats m7-stats3" id="cm-stats" aria-live="polite"></div>
+        <p class="tool-note" id="cm-note"></p>
+
+        <h3 class="tk-sub-h">Calm and Stressed Days</h3>
+        <p class="m7-text">On SPY&rsquo;s worst 10% of days the average pairwise correlation is 0.41, against 0.25 on the
+        middle 80%. A one-factor model in which only SPY&rsquo;s variance changes predicts 0.48 for those worst days, so the
+        rise in sell-offs is no more than the market&rsquo;s higher volatility explains.</p>
+        <div class="m7-chart" id="cc-chart"></div>
+        <div class="m7-legend" id="cc-legend"></div>
+        <p class="tool-note">The benchmark keeps each stock&rsquo;s full-sample beta to SPY and the full-sample residual
+        covariance, and replaces SPY&rsquo;s variance with its variance on those days. Splitting the days by the
+        market&rsquo;s return lowers every subset&rsquo;s correlation below the all-days figure.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band white" id="concentration">
+    <div class="wrap">
+      <div class="section-head"><div><h2>Concentration in the Index</h2>
+        <p>The cap-weighted index increasingly moves with these seven, and the equal-weighted index does not. The share of
+        SPY&rsquo;s daily variance explained by the equal-weight seven was 0.33 at the end of 2013, 0.84 at the end of 2022 and
+        0.71 on 10 November 2026; for RSP it is 0.22.</p></div></div>
+      <div class="tool">
+        <div class="m7-chart" id="cn-chart"></div>
+        <div class="m7-legend" id="cn-legend"></div>
+        <p class="tool-note">R&sup2; of a regression of each fund&rsquo;s daily returns on the equal-weight basket&rsquo;s over
+        the trailing 252 trading days, at month ends. SPY weights the S&amp;P 500 by market cap; RSP weights the same stocks
+        equally. The data hold no historical index weights, so the seven&rsquo;s weight in the index is not measured.</p>
+
+        <h3 class="tk-sub-h">Who Carries the Risk</h3>
+        <p class="m7-text">Equal weights do not mean equal risk. Over the full sample TSLA carries 21.0% of the equal-weight
+        basket&rsquo;s volatility and AAPL 10.6%; over the last year AAPL carries 5.2%.</p>
+        <div class="ticker-groups"><div class="ticker-group"><span>Weights and covariance</span>
+          <div class="presets" id="cn-set" role="group" aria-label="Weights and covariance">
+            <button type="button" data-value="ew_full" aria-pressed="true">Equal weight, full sample</button>
+            <button type="button" data-value="ew_year" aria-pressed="false">Equal weight, last 252 days</button>
+            <button type="button" data-value="cap_year" aria-pressed="false">Current market caps, last 252 days</button>
+          </div></div></div>
+        <div class="m7-chart" id="rcn-chart"></div>
+        <div class="m7-legend" id="rcn-legend"></div>
+        <div class="stats m7-stats3" id="rcn-stats" aria-live="polite"></div>
+        <p class="tool-note">Each stock&rsquo;s share of the basket&rsquo;s volatility is its weight times its marginal
+        contribution, w<sub>i</sub>(&Sigma;w)<sub>i</sub>/&sigma;<sub>p</sub>; the shares add up to 100%. The diversification
+        ratio is the weighted average of the stocks&rsquo; volatilities over the portfolio&rsquo;s. Current market caps are
+        Yahoo&rsquo;s on 11 November 2026 and are used only with the last year&rsquo;s covariance.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band gray" id="tails">
+    <div class="wrap">
+      <div class="section-head"><div><h2>Joint Tail Moves</h2>
+        <p>Joint crashes cluster more than correlation alone implies. On 35 days at least three of the seven fell more than
+        5%; a Gaussian copula with the observed rank correlations expects 27, and independent stocks fewer than one. On 10 days
+        at least five fell more than 5%, 2.9 times the 3.5 the copula expects.</p></div></div>
+      <div class="tool">
+        <div class="ticker-groups"><div class="ticker-group"><span>Daily move</span>
+          <div class="presets" id="jt-threshold" role="group" aria-label="Daily move">
+            <button type="button" data-value="-0.03" aria-pressed="false">Falls of more than 3%</button>
+            <button type="button" data-value="-0.05" aria-pressed="true">Falls of more than 5%</button>
+            <button type="button" data-value="-0.07" aria-pressed="false">Falls of more than 7%</button>
+            <button type="button" data-value="+0.05" aria-pressed="false">Rises of more than 5%</button>
+          </div></div></div>
+        <div class="m7-chart" id="jt-chart"></div>
+        <div class="m7-legend" id="jt-legend"></div>
+        <div class="scroll-x" style="margin-top:14px">
+          <table class="checks m7-table" id="jt-table">
+            <thead><tr><th>At least k of 7</th><th class="m7-num">Observed days</th><th class="m7-num">Gaussian copula</th>
+              <th class="m7-num">Independent stocks</th><th class="m7-num">Observed / copula</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="tool-note">Days from 21 May 2012 to 10 November 2026 on which at least k of the seven moved more than the
+        threshold. Both benchmarks keep each stock&rsquo;s own frequency of such moves. The copula is fitted in-sample and
+        simulated with a million draws; counts of 10 or 20 days are small, so the ratios are rough.</p>
+
+        <h3 class="tk-sub-h">Joint Crashes by Year</h3>
+        <p class="m7-text">Joint crashes come in clusters of time. Of the 35 days with at least three falls of more than 5%,
+        13 were in 2022 and 10 in 2020.</p>
+        <div class="m7-chart" id="jy-chart"></div>
+        <p class="tool-note">Days on which at least three of the seven fell more than 5%. 2012 starts on 21 May and 2026 ends
+        on 10 November.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band white" id="event-study">
+    <div class="wrap">
+      <div class="section-head"><div><h2>Event Study: Nvidia, November 2026</h2>
+        <p>Nvidia&rsquo;s November 2026 sell-off was mostly company-specific, but not on its worst day. On 5 November NVDA fell
+        9.3%; SPY&rsquo;s 4.4% fall, at a beta of 1.89, accounts for &minus;8.3 points. On 9 November, the first trading day
+        after its board&rsquo;s statement, NVDA fell 4.3% while SPY rose 2.4%, and its company-specific part was &minus;8.4%
+        (z&nbsp;&minus;5.0). A semiconductor basket without Nvidia in place of SMH gives the same reading of both days, but changes
+        the DeepSeek day, 27 January 2025, from mostly sector to mostly company-specific.</p></div></div>
+      <div class="m7-text">
+        <p>From its highest close, on 6 October 2026, to 10 November 2026, Nvidia fell 29.4% while SPY fell 3.7%. On 5
+        November SPY fell 4.4% and SMH, a semiconductor ETF, 11.2%. On Sunday 8 November Nvidia&rsquo;s board said it was
+        opening an independent investigation, overseen by a committee of independent directors with outside counsel
+        (<a href="https://nvidianews.nvidia.com/news/statement-from-nvidia-board-of-directors">statement from Nvidia&rsquo;s
+        board</a>). 9 November was the first trading day after the statement.</p>
+        <p>Each day&rsquo;s return is split into four parts that add up to it: market (beta to SPY times SPY&rsquo;s return),
+        sector (the semiconductor factor&rsquo;s move beyond what SPY implies), alpha, and a company-specific part. The
+        coefficients come from the 250 trading days ending 21 days before each event. z is the company-specific part over the
+        residual standard deviation of that window.</p>
+      </div>
+      <div class="tool">
+        <div class="ticker-groups"><div class="ticker-group"><span>Sector factor</span>
+          <div class="seg" id="es-sector" role="group" aria-label="Sector factor">
+            <button type="button" data-value="smh" aria-pressed="true">SMH</button>
+            <button type="button" data-value="peers" aria-pressed="false">Peers without Nvidia</button>
+          </div></div></div>
+        <div class="m7-chart" id="es-chart"></div>
+        <div class="m7-legend" id="es-legend"></div>
+        <div class="stats m7-stats6" id="es-stats" aria-live="polite"></div>
+        <h3 class="tk-sub-h">Windows</h3>
+        <div class="scroll-x">
+          <table class="checks m7-table m7-wrap" id="es-table">
+            <thead><tr><th>Window</th><th class="m7-num">Days</th><th class="m7-num">NVDA</th><th class="m7-num">SPY</th>
+              <th class="m7-num">Market</th><th class="m7-num">Sector</th><th class="m7-num">Alpha</th>
+              <th class="m7-num">Company-specific (z)</th><th class="m7-num">Compounding</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <p class="tool-note" id="es-note"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="band gray">
+    <div class="wrap article">
+      <h2>Data and Caveats</h2>
+      <ul>
+        <li>Prices are daily closes from Yahoo Finance via the yfinance library, adjusted for splits and dividends; factors
+        come from the Ken French data library. Yahoo data is for personal use, so this page shows only the summary statistics
+        published in the repository: no price or return series.</li>
+        <li>The seven were chosen with hindsight because they became the largest companies. Returns, Sharpe ratios and alphas
+        measured on them overstate what a forward-looking investor could have earned. The risk and co-movement results are
+        less affected, but also describe stocks that turned out to be winners.</li>
+        <li>SPY, QQQ and RSP are funds, so their returns are after fees. The equal-weight portfolios trade free of cost.</li>
+        <li>The value-weighted Ken French factors include these seven, which flatters the factor R&sup2; and the residual
+        correlations. The factor files end on 30 September 2026.</li>
+        <li>One-year rolling windows jump when an extreme day enters and again when it leaves, 252 days later.</li>
+        <li>The event days were chosen after the fact. The z-scores are descriptive: Nvidia&rsquo;s residuals have fat tails,
+        so they should not be read as normal p-values.</li>
+      </ul>
+      <p>The page reads one JSON file that <code>scripts/export_site_data.py</code> builds from the CSVs in
+      <code>results/</code>; a test checks that every date in it is a month end or one of the event days. The code, tests and
+      full write-up are on <a href="https://github.com/xm0207/mega7-decomposition">GitHub</a>.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="legal"><a href="../">Xiangzhong (Shaun) Meng</a> &middot; <a href="mailto:xiangzhong.meng@hotmail.com">xiangzhong.meng@hotmail.com</a> &middot; Last Updated November 2026</div>
+  </div>
+</footer>
+
+<script src="mega7.js" defer></script>
+</body>
+</html>

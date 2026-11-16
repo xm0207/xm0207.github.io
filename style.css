@@ -519,3 +519,45 @@ table.checks td:first-child { font-weight: 600; color: var(--ink); white-space: 
   .nav-icons { margin-left: 12px; padding-left: 12px; gap: 6px; }
   .nav-icons a { width: 30px; height: 30px; }
 }
+
+/* Mega 7 dashboard (projects/mega7.html); every rule is scoped to an .m7- class */
+.m7-chart { position: relative; margin: 4px 0 0; }
+.m7-chart svg { display: block; width: 100%; height: auto; overflow: visible; touch-action: pan-y; }
+.m7-chart svg text { font-family: var(--sans); }
+.m7-tip { position: absolute; left: 0; top: 0; z-index: 2; pointer-events: none; max-width: 250px; padding: 8px 10px;
+  border-radius: 8px; background: var(--ink); color: #fff; font-size: 0.78rem; line-height: 1.45;
+  box-shadow: 0 8px 20px rgba(31, 30, 29, 0.18); opacity: 0; transition: opacity 0.1s; }
+.m7-tip.on { opacity: 1; }
+.m7-tip b { display: block; font-weight: 600; margin-bottom: 2px; }
+.m7-tip i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 5px; }
+.m7-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.8rem; color: var(--muted); margin: 10px 0 0; }
+.m7-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.m7-legend i { display: inline-block; width: 12px; height: 10px; border-radius: 2px; }
+.m7-legend i.m7-line { height: 2px; }
+.m7-legend i.m7-dot { width: 9px; height: 9px; border-radius: 50%; }
+.m7-legend i.m7-tick { width: 14px; height: 3px; border-radius: 1px; }
+.m7-summary { font-size: 0.86rem; color: var(--body); margin: 10px 0 0; }
+.m7-table th.m7-num, .m7-table td.m7-num { text-align: right; font-variant-numeric: tabular-nums; }
+.m7-table td.m7-num { white-space: nowrap; }
+.m7-table.m7-wrap td:first-child { white-space: normal; min-width: 170px; }
+.m7-table td { padding: 10px 12px; }
+.m7-table tr.m7-basket td { background: var(--accent-soft); }
+.m7-table tr.m7-index td { color: var(--muted); }
+.m7-table tr.m7-index td:first-child { color: var(--body); }
+.m7-sort { font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; background: none; border: 0;
+  padding: 0; cursor: pointer; text-align: inherit; }
+.m7-sort:hover { text-decoration: underline; }
+.m7-sort:focus-visible { outline: 2px solid #7fb3e6; outline-offset: 2px; border-radius: 3px; }
+.m7-sort::after { content: ""; display: inline-block; width: 0.9em; }
+th[aria-sort="descending"] .m7-sort::after { content: " \2193"; }
+th[aria-sort="ascending"] .m7-sort::after { content: " \2191"; }
+.m7-text { max-width: 760px; margin: 0 0 18px; }
+.m7-text p { margin: 0 0 10px; }
+.stats.m7-stats3, .stats.m7-stats6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 720px) {
+  .m7-table td { padding: 9px 10px; }
+  .stats.m7-stats6 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stats.m7-stats3 .stat { padding: 9px 9px; }
+  .stats.m7-stats3 .stat b { font-size: 0.98rem; }
+  .stats.m7-stats3 .stat small { font-size: 0.74rem; }
+}
